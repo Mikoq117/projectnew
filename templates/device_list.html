@@ -1,0 +1,24 @@
+<h1>Device List</h1>
+
+<!-- Logout button using a POST form -->
+<form action="{% url 'logout' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+
+<ul>
+    {% for device in devices %}
+        <li>
+            {{ device.devicename }} assigned to {{ device.owner }}
+            <form action="{% url 'delete_device' device.id %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<!-- Button to add a new device -->
+<a href="{% url 'add_device' %}">
+    <button>Add a New Device</button>
+</a>

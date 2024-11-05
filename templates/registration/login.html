@@ -1,0 +1,12 @@
+<h1>Login</h1>
+{% if form.errors %}
+    <p style="color: red;">Invalid username or password. Please try again.</p>
+{% endif %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
+
+<!-- Button to navigate to the registration page -->
+<p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
