@@ -1,0 +1,10 @@
+<h1>Device Details</h1>
+
+<p><strong>Device Name:</strong> {{ device.devicename }}</p>
+<p><strong>Owner:</strong> {{ device.owner }}</p>
+<p><strong>Device ID:</strong> {{ device.user_device_id }}</p>
+
+<!-- Button to go back to the device list -->
+<a href="{% url 'device_list' %}">
+    <button>Back to Device List</button>
+</a>

@@ -1,9 +1,22 @@
 from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Device
 from django.contrib.auth.forms import UserCreationForm
+
+from django.shortcuts import render, redirect
+from .forms import DeviceForm  # Import the form
+
+from myapp.models import PhoneSpecs
+
+from django.contrib import messages
+
+
+from .forms import DeviceForm
+from .models import Device
+
 
 # User registration view
 def register(request):
@@ -25,21 +38,26 @@ def device_list(request):
 
 # Add device view
 @login_required
+
+
+
+
 def add_device(request):
-    error_message = None
     if request.method == 'POST':
-        devicename = request.POST.get('devicename')
-        owner = request.POST.get('owner')
+        form = DeviceForm(request.POST)
+        if form.is_valid():
+            device = form.save(commit=False)
+            device.app_user = request.user  # Link device to current user
+            device.user_device_id = generate_unique_id()  # Use your unique ID generator
+            device.save()
+            return redirect('device_added')  # Redirect to a confirmation page
+    else:
+        form = DeviceForm()
+    return render(request, 'add_device.html', {'form': form})
 
-        if not devicename or not owner:
-            error_message = "Both Device Name and Owner fields are required."
-        else:
-            # Create a device associated with the logged-in user
-            Device.objects.create(devicename=devicename, owner=owner, app_user=request.user)
-            return render(request, 'device_added.html', {'devicename': devicename})
-
-    return render(request, 'add_device.html', {'error_message': error_message})
-
+def generate_unique_id():
+    import uuid
+    return str(uuid.uuid4())
 # Delete device view
 @login_required
 def delete_device(request, device_id):
@@ -48,3 +66,13 @@ def delete_device(request, device_id):
         device.delete()
         return redirect('device_list')
     return redirect('device_list')
+@login_required
+def device_details(request, user_device_id):
+    # Retrieve the specific device based on user_device_id and the logged-in user
+    device = get_object_or_404(Device, user_device_id=user_device_id, app_user=request.user)
+    return render(request, 'device_details.html', {'device': device})
+
+
+def device_added(request, device_id):
+    device = Device.objects.get(id=device_id)
+    return render(request, 'device_added.html', {'device': device})
