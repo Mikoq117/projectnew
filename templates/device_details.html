@@ -1,10 +1,78 @@
-<h1>Device Details</h1>
-
-<p><strong>Device Name:</strong> {{ device.devicename }}</p>
-<p><strong>Owner:</strong> {{ device.owner }}</p>
-<p><strong>Device ID:</strong> {{ device.user_device_id }}</p>
-
-<!-- Button to go back to the device list -->
-<a href="{% url 'device_list' %}">
-    <button>Back to Device List</button>
-</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        ul li strong {
+            color: #555;
+        }
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .back-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .back-button button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Device Details</h1>
+        <ul>
+            <li><strong>Owner:</strong> {{ device.owner }}</li>
+            <li><strong>Unique ID:</strong> {{ device.user_device_id }}</li>
+            <li><strong>Model:</strong> {{ device.model.name }}</li>
+            <li><strong>Release Date:</strong> {{ device.model.release_date }}</li>
+            <li><strong>Display Size:</strong> {{ device.model.display_size }}</li>
+            <li><strong>Operating System:</strong> {{ device.model.os }}</li>
+            <li><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</li>
+            <li><strong>Time Left:</strong> {{ warranty_time_left }}</li>
+            <li><strong>OS Support End Date:</strong> {{ os_support_end|date:"d M Y" }}</li>
+            <li><strong>Time Left for OS Support:</strong> {{ os_support_time_left }}</li>
+        </ul>
+        <div class="back-button">
+            <a href="{% url 'device_list' %}">
+                <button>Back to Device List</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

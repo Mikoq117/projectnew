@@ -1,5 +1,71 @@
-<h1>Device Added!</h1>
-<p><strong>Device Name:</strong> {{ device.devicename }}</p>
-<p><strong>Owner:</strong> {{ device.owner }}</p>
-<p><strong>Unique ID:</strong> {{ device.user_device_id }}</p>
-<a href="{% url 'device_list' %}">Go to Device List</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Added</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+        }
+        p strong {
+            color: #333;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .button-group a button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button-group a button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Device Successfully Added!</h1>
+        <p><strong>Model:</strong> {{ device.model.name }}</p>
+        <p><strong>Owner:</strong> {{ device.owner }}</p>
+        <p><strong>Unique ID:</strong> {{ device.user_device_id }}</p>
+        <p><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</p>
+        <p><strong>Time Left:</strong> {{ warranty_time_left }}</p>
+
+        <div class="button-group">
+            <a href="{% url 'device_list' %}">
+                <button>Go to Device List</button>
+            </a>
+            <a href="{% url 'add_device' %}">
+                <button>Add Another Device</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

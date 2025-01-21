@@ -1,17 +1,26 @@
 
 # WIP making form for our collect phone models that users choose from WIP
-from django import forms
-from .models import Device
-import uuid  # For generating the unique ID
 
+
+import uuid  # For generating the unique ID
+from django import forms
+from .models import Device, PhoneSpecs
 
 class DeviceForm(forms.ModelForm):
+    model = forms.ModelChoiceField(
+        queryset=PhoneSpecs.objects.all(),
+        empty_label="Select a phone model",
+        required=True,
+        label="Model",
+    )
+
     class Meta:
         model = Device
-        fields = ['owner', 'devicename']
+        fields = ['owner', 'model', 'warranty_end_date']  # Add warranty_end_date here
         widgets = {
-            'owner': forms.TextInput(attrs={'placeholder': 'Enter device owner'}),
+            'warranty_end_date': forms.DateInput(attrs={'type': 'date'}),  # Date picker in the form
         }
+
 
 
     def save(self, commit=True):
