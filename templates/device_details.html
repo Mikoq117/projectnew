@@ -65,8 +65,9 @@
             <li><strong>Operating System:</strong> {{ device.model.os }}</li>
             <li><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</li>
             <li><strong>Time Left:</strong> {{ warranty_time_left }}</li>
-            <li><strong>OS Support End Date:</strong> {{ os_support_end|date:"d M Y" }}</li>
-            <li><strong>Time Left for OS Support:</strong> {{ os_support_time_left }}</li>
+            <li><strong>OS Support End Date:</strong> {{ device.os_support_end|date:"d M Y" }}</li>
+           <li><strong>Time Left for OS Support:</strong> {{ device.os_support_time_left }}</li>
+            <li><strong>Realistic Usability Timeframe:</strong> {{ device.realistic_usability_timeframe }}</li>
         </ul>
         <div class="back-button">
             <a href="{% url 'device_list' %}">

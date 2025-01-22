@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .logout-button {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .logout-button form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logout-button">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="btn-danger" type="submit">Logout</button>
+            </form>
+        </div>
+        <h1>Admin Dashboard</h1>
+
+        <!-- Buttons to Start Scrapers -->
+        <form action="{% url 'start_scraper_all' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Start All Scrapers (Samsung + Apple)</button>
+        </form>
+
+        <form action="{% url 'start_scraper_samsung' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Start Samsung Scraper</button>
+        </form>
+
+        <form action="{% url 'start_scraper_apple' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Start Apple Scraper</button>
+        </form>
+
+        <a href="{% url 'dashboard' %}">
+            <button>Back to User Dashboard</button>
+        </a>
+    </div>
+</body>
+</html>

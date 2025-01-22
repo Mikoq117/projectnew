@@ -65,24 +65,29 @@
             background-color: #6c757d;
             color: white;
         }
-        .add-device {
-            margin-top: 20px;
-            text-align: center;
+        .header-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
-        .add-device button {
-            font-size: 16px;
+        .header-buttons form {
+            display: inline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Your Devices</h1>
+        <div class="header-buttons">
+            <a href="{% url 'dashboard' %}">
+                <button class="btn-secondary">Dashboard</button>
+            </a>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger">Logout</button>
+            </form>
+        </div>
 
-        <!-- Logout Button -->
-        <form action="{% url 'logout' %}" method="post" style="text-align: right;">
-            {% csrf_token %}
-            <button type="submit" class="btn-danger">Logout</button>
-        </form>
+        <h1>Your Devices</h1>
 
         <!-- Device List -->
         <ul class="device-list">
