@@ -11,6 +11,7 @@
             padding: 0;
             background-color: #f4f4f9;
         }
+
         .container {
             max-width: 600px;
             margin: 50px auto;
@@ -19,43 +20,69 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
+
         ul {
             list-style: none;
             padding: 0;
         }
-        ul li {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        ul li strong {
+
+        li {
+            margin-bottom: 10px;
+            font-size: 16px;
             color: #555;
         }
-        .back-button {
-            display: block;
-            margin: 20px auto;
-            text-align: center;
+
+        strong {
+            font-weight: bold;
+            color: #333;
         }
-        .back-button button {
-            padding: 10px 20px;
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px;
             font-size: 16px;
-            background-color: #007bff;
-            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            color: white;
         }
-        .back-button button:hover {
-            background-color: #0056b3;
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        form {
+            display: inline;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Device Details</h1>
+
         <ul>
             <li><strong>Owner:</strong> {{ device.owner }}</li>
             <li><strong>Unique ID:</strong> {{ device.user_device_id }}</li>
@@ -64,14 +91,27 @@
             <li><strong>Display Size:</strong> {{ device.model.display_size }}</li>
             <li><strong>Operating System:</strong> {{ device.model.os }}</li>
             <li><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</li>
-            <li><strong>Time Left:</strong> {{ warranty_time_left }}</li>
+            <li><strong>Time Left:</strong> {{ device.warranty_time_left }}</li>
             <li><strong>OS Support End Date:</strong> {{ device.os_support_end|date:"d M Y" }}</li>
-           <li><strong>Time Left for OS Support:</strong> {{ device.os_support_time_left }}</li>
+            <li><strong>Time Left for OS Support:</strong> {{ device.os_support_time_left }}</li>
             <li><strong>Realistic Usability Timeframe:</strong> {{ device.realistic_usability_timeframe }}</li>
         </ul>
-        <div class="back-button">
+
+        <div class="button-group">
+            <!-- Edit Device Button -->
+            <a href="{% url 'edit_device' device.id %}">
+                <button class="btn-primary">Edit Device</button>
+            </a>
+
+            <!-- Delete Device Button -->
+            <form action="{% url 'delete_device' device.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn-danger" type="submit">Delete Device</button>
+            </form>
+
+            <!-- Back to Device List Button -->
             <a href="{% url 'device_list' %}">
-                <button>Back to Device List</button>
+                <button class="btn-secondary">Back to Device List</button>
             </a>
         </div>
     </div>

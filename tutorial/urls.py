@@ -27,4 +27,17 @@ path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),  # Admi
     path('start-scraper-samsung/', views.start_scraper_samsung, name='start_scraper_samsung'),
     path('start-scraper-apple/', views.start_scraper_apple, name='start_scraper_apple'),
 path('', CustomLoginView.as_view(), name='login'),  # Use the custom login view
+
+    path('device-users/', views.device_user_list, name='device_user_list'),
+
+
+    path('reports/', views.reports, name='reports'),
+    path('export-excel/', views.export_excel, name='export_excel'),
+path('export-filtered-data/', views.export_filtered_data, name='export_filtered_data'),
+
+path('edit-device-user/<int:user_id>/', views.edit_device_user, name='edit_device_user'),
+    path('delete-device-user/<int:user_id>/', views.delete_device_user, name='delete_device_user'),
+path('edit-device/<int:device_id>/', views.edit_device, name='edit_device'),
 ]
+
+

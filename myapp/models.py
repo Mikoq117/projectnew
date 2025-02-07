@@ -2,7 +2,23 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
 from datetime import datetime, timedelta
+import uuid
 
+
+class DeviceUser(models.Model):
+    # Device Users are tied to the app user
+    app_user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the app user
+    full_name = models.CharField(max_length=255)  # Full Name
+    position = models.CharField(max_length=255, null=True, blank=True)  # Optional position
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # Auto-generated unique ID
+    location = models.CharField(max_length=255)  # Location
+    phone_number = models.CharField(max_length=15, null=True, blank=True)  # Optional phone number
+    email = models.EmailField(null=True, blank=True)  # Optional email
+
+    def __str__(self):
+        return self.full_name  # Show the full name when printing or displaying the object
+
+# Define the PhoneSpecs model for saving
 class PhoneSpecs(models.Model):
     unique_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
@@ -11,33 +27,41 @@ class PhoneSpecs(models.Model):
     os = models.CharField(max_length=100, null=True, blank=True)
     platform = models.CharField(
         max_length=10,
-        choices=[('iOS', 'iOS'), ('Android', 'Android')],
-        default='Android'
-    )  # New field to specify the platform
+        choices=[('iOS', 'iOS'), ('Android', 'Android')],  # Platform options: iOS or Android
+        default='Android' # defaults to android
+    )
 
     class Meta:
-        app_label = 'myapp'  # Explicitly associate this model with 'myapp'
+        app_label = 'myapp'  # label myapp cos of error
 
     def __str__(self):
         return self.name
 
 
+# Define the Device model (what users make)
 class Device(models.Model):
-    app_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    owner = models.CharField(max_length=255)
+    app_user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who owns the device
+    owner = models.ForeignKey(DeviceUser, on_delete=models.CASCADE)
     model = models.ForeignKey(PhoneSpecs, on_delete=models.CASCADE)
-    user_device_id = models.CharField(max_length=255, unique=True)  # Unique device ID
+    user_device_id = models.CharField(max_length=255, unique=True)
     warranty_end_date = models.DateField(null=True, blank=True)
+
+
 
     @staticmethod
     def generate_unique_id(user):
         """
-        Generate a unique ID for a device based on the user ID and their current number of devices.
+        makes a unique ID for a device based on the user ID and the count of their current devices.
+
         """
-        device_count = Device.objects.filter(app_user=user).count()
-        return f"{user.id}-{device_count + 1}"
+        device_count = Device.objects.filter(app_user=user).count()  # Count device
+        return f"{user.id}-{device_count + 1}"  # Generate  ID
 
     def warranty_time_left(self):
+        """
+        Calculate the remaining warranty  for the device.
+
+        """
         if self.warranty_end_date:
             today = date.today()
             remaining = self.warranty_end_date - today
@@ -51,78 +75,76 @@ class Device(models.Model):
 
     def os_support_end(self):
         """
-        Calculate the support end date based on the platform.
-        For iOS: Fixed 6 years from release date.
-        For Android: Use lifespan from scraped data.
+        Calculate the support end date based on the platforms
+        For iOS: Fixed 6 years from the release date
+        For Android: Use the "up to X major upgrades"
         """
         try:
-            # Extract release year and clean it
-            release_year_str = self.model.release_date.split()[0].replace(',', '')  # Remove commas
-            release_year = int(release_year_str)  # Convert to integer
-            release_date = datetime(release_year, 9, 1)  # Assuming a September release
+            # Extract the release year from the release_date field
+            release_year_str = self.model.release_date.split()[0].replace(',', '')  # Remove commas as it lags
+            release_year = int(release_year_str)  # Convert to an integer
+            release_date = datetime(release_year, 9, 1)  # presume September release
 
             if self.model.platform == 'iOS':
-                # Fixed 6 years of support for iPhones
+                # Fixed 6 years of support for apple/ios devices
                 support_end_date = release_date + timedelta(days=6 * 365)
-                print(f"iOS Device: {self.model.name}, Support End: {support_end_date}")
                 return support_end_date
 
             elif self.model.platform == 'Android':
-                # Extract the number of major upgrades for Android
+                # Calculate based on the number of major Android upgrades
                 if "up to" in self.model.os.lower():
                     major_upgrades = int(self.model.os.lower().split('up to ')[1].split(' ')[0])
                     support_end_date = release_date + timedelta(days=major_upgrades * 365)
-                    print(f"Android Device: {self.model.name}, Support End: {support_end_date}")
                     return support_end_date
 
-            print(f"No valid support calculation for {self.model.name}")
-            return None  # Default if no valid platform or data
-
+            return None  # Return none if the data is insufficient - only applies to niche cases
         except (ValueError, IndexError, AttributeError) as e:
-            # Handle missing or invalid data
             print(f"Error in os_support_end for {self.model.name}: {e}")
             return None
 
     def os_support_time_left(self):
         """
         Calculate the remaining time for OS support.
+
         """
-        support_end_date = self.os_support_end()
+        support_end_date = self.os_support_end()  # Fetch the calculated support end date
         if support_end_date:
             today = datetime.now()
             remaining = support_end_date - today
             if remaining.days > 0:
                 years, days = divmod(remaining.days, 365)
                 months, days = divmod(days, 30)
-                print(f"Device: {self.model.name}, Time Left: {years} years, {months} months, {days} days")
                 return f"{years} years, {months} months, {days} days"
             else:
-                print(f"Device: {self.model.name}, Support has ended")
                 return "Support has ended"
-        print(f"Device: {self.model.name}, No support data available")
         return "No support data available"
 
     def realistic_usability_timeframe(self):
         """
-        Calculate the realistic usability timeframe for Android devices.
-        For non-Android devices, return the regular OS support end date.
+        Calculate the realistic usability timeframe for Android devices ONLY as 75% of the support time.
+
         """
         try:
-            support_end_date = self.os_support_end()  # Get OS support end date
+            support_end_date = self.os_support_end()  # Get the OS support end date
             if not support_end_date:
                 return "No support data available"
 
-            if self.model.platform == 'Android':  # Only for Android devices
-                today = datetime.now()  # Current date
+            if self.model.platform == 'Android':  # Only calculate for Android devices
+                today = datetime.now()
                 total_days = (support_end_date - today).days
-                usable_days = int(total_days * 0.75)  # 75% of the total time
-                usability_date = today + timedelta(days=usable_days)  # Calculate the usability date
-                return usability_date.strftime("%B %Y")  # Format as "Month Year"
+                usable_days = int(total_days * 0.75)  # 75%
+                usability_date = today + timedelta(days=usable_days)
+                return usability_date.strftime("%B %Y")  # make the result as "Month Year" to make it simpler
 
-            # For non-Android devices, return the full OS support end date
+            # just give simplified veriosn of regular support end for ios
             return support_end_date.strftime("%B %Y")
         except Exception as e:
             print(f"Error calculating realistic usability timeframe for {self.model.name}: {e}")
             return "Error"
+
     def __str__(self):
-        return f"{self.model.name} ({self.owner})"
+        # Display the  model and owner when printing
+        return f"{self.model.name} ({self.owner.full_name})"
+
+
+

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .button-group {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #1d6f42;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reports</h1>
+
+        <!-- Navigation Buttons -->
+        <div class="button-group">
+            <a href="{% url 'dashboard' %}">
+                <button class="btn-primary">Dashboard</button>
+            </a>
+            <form method="POST" action="{% url 'export_excel' %}">
+                {% csrf_token %}
+              <button id="export-visible-data" class="btn-secondary" type="button">Export Visible Device Data to CSV</button>
+
+            </form>
+        </div>
+
+
+
+        <!-- Device Table -->
+ <!-- Search for devices -->
+<h2>Your Devices</h2>
+
+<!-- Search Section -->
+<div class="search-section">
+    <input type="text" id="device-search-bar" placeholder="Search devices..." onkeyup="filterDeviceTable()">
+    <select id="device-search-field" onchange="resetSearch()">
+        <option value="all">All Fields</option>
+        <option value="0">Model</option>
+        <option value="1">Owner</option>
+        <option value="2">Unique Device ID</option>
+        <option value="3">Warranty End Date</option>
+        <option value="4">Time Left (Warranty)</option>
+        <option value="5">Release Date</option>
+        <option value="6">Display Size</option>
+        <option value="7">Operating System</option>
+        <option value="8">Platform</option>
+        <option value="9">OS Support End Date</option>
+        <option value="10">Time Left for OS Support</option>
+        <option value="11">Realistic Usability Timeframe</option>
+    </select>
+</div>
+
+<!-- Device Table -->
+<table id="device-table">
+    <thead>
+        <tr>
+            <th>Model</th>
+            <th>Owner</th>
+            <th>Unique Device ID</th>
+            <th>Warranty End Date</th>
+            <th>Time Left (Warranty)</th>
+            <th>Release Date</th>
+            <th>Display Size</th>
+            <th>Operating System</th>
+            <th>Platform</th>
+            <th>OS Support End Date</th>
+            <th>Time Left for OS Support</th>
+            <th>Realistic Usability Timeframe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for device in devices %}
+            <tr>
+                <td>{{ device.model.name }}</td>
+                <td>{{ device.owner }}</td>
+                <td>{{ device.user_device_id }}</td>
+                <td>{{ device.warranty_end_date }}</td>
+                <td>{{ device.warranty_time_left }}</td>
+                <td>{{ device.model.release_date }}</td>
+                <td>{{ device.model.display_size }}</td>
+                <td>{{ device.model.os }}</td>
+                <td>{{ device.model.platform }}</td>
+                <td>{{ device.os_support_end|date:"d M Y" }}</td>
+                <td>{{ device.os_support_time_left }}</td>
+                <td>{{ device.realistic_usability_timeframe }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<!-- Search for device-users -->
+<h2>Your Device Users</h2>
+
+<!-- Search Section for Device-Users -->
+<div class="search-section">
+    <input type="text" id="device-user-search-bar" placeholder="Search device users..." onkeyup="filterDeviceUserTable()">
+    <select id="device-user-search-field" onchange="resetDeviceUserSearch()">
+        <option value="all">All Fields</option>
+        <option value="0">Full Name</option>
+        <option value="1">Position</option>
+        <option value="2">Location</option>
+        <option value="3">Phone Number</option>
+        <option value="4">Email</option>
+    </select>
+</div>
+
+<!-- Device-User Table -->
+<table id="device-user-table">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Position</th>
+            <th>Location</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in device_users %}
+            <tr>
+                <td>
+                   <span class="user-link">{{ user.full_name }}</span>
+                </td>
+                <td>{{ user.position|default:"N/A" }}</td>
+                <td>{{ user.location }}</td>
+                <td>{{ user.phone_number|default:"N/A" }}</td>
+                <td>{{ user.email|default:"N/A" }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+ <!--SCRIPTS IN JAVA FOR SEARCHING-->
+
+
+ <script>
+function filterDeviceTable() {
+    // Get the search input and selected search field for devices
+    const input = document.getElementById("device-search-bar").value.toLowerCase();
+    const selectedField = document.getElementById("device-search-field").value;
+    const table = document.getElementById("device-table");
+    const rows = table.getElementsByTagName("tr");
+
+    // Loop through all rows (skipping the header row)
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        // Search across all fields if 'All Fields' is selected
+        if (selectedField === "all") {
+            for (let cell of cells) {
+                if (cell.innerText.toLowerCase().includes(input)) {
+                    match = true;
+                    break;
+                }
+            }
+        } else {
+            // Search in a specific field (by column index) if selected
+            const cell = cells[parseInt(selectedField)];
+            if (cell && cell.innerText.toLowerCase().includes(input)) {
+                match = true;
+            }
+        }
+
+        // Show the row if there's a match, otherwise hide it
+        rows[i].style.display = match ? "" : "none";
+    }
+}
+
+function resetSearch() {
+    // Clear the search bar when the search field selection changes and reset the table
+    document.getElementById("device-search-bar").value = "";
+    filterDeviceTable();
+}
+
+function filterDeviceUserTable() {
+    // Get the search input and selected field for device-users
+    const input = document.getElementById("device-user-search-bar").value.toLowerCase();
+    const selectedField = document.getElementById("device-user-search-field").value;
+    const table = document.getElementById("device-user-table");
+    const rows = table.getElementsByTagName("tr");
+
+    // Loop through all rows (skipping the header row)
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        // Search across all fields if 'All Fields' is selected
+        if (selectedField === "all") {
+            for (let cell of cells) {
+                if (cell.innerText.toLowerCase().includes(input)) {
+                    match = true;
+                    break;
+                }
+            }
+        } else {
+            // Search in a specific field (by column index) if selected
+            const cell = cells[parseInt(selectedField)];
+            if (cell && cell.innerText.toLowerCase().includes(input)) {
+                match = true;
+            }
+        }
+
+        // Show the row if there's a match, otherwise hide it
+        rows[i].style.display = match ? "" : "none";
+    }
+}
+
+function resetDeviceUserSearch() {
+    // Clear the device-user search bar and reset the table when the field selection changes
+    document.getElementById("device-user-search-bar").value = "";
+    filterDeviceUserTable();
+}
+
+// Event listener for exporting visible device data to CSV
+document.getElementById("export-visible-data").addEventListener("click", function () {
+    // Get all visible rows from the device table
+    const rows = Array.from(document.querySelectorAll("#device-table tbody tr"))
+        .filter(row => row.style.display !== "none");
+
+    // Extract text data from each visible row and cell
+    const data = rows.map(row => {
+        return Array.from(row.querySelectorAll("td")).map(cell => cell.innerText);
+    });
+
+    // Send the filtered data to the server for export
+    fetch("{% url 'export_filtered_data' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ data: data })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        // Create a downloadable CSV file from the server response
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "filtered_device_data.csv";
+        link.click();
+        window.URL.revokeObjectURL(url);
+    });
+});
+</script>
+
