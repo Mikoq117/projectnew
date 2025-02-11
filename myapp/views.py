@@ -228,18 +228,18 @@ def device_details(request, user_device_id):
 
 
 def edit_device(request, device_id):
-    device = get_object_or_404(Device, id=device_id)
 
-    if request.method == 'POST':
-        form = DeviceForm(request.POST, instance=device)
-        if form.is_valid():
-            form.save()
-            return redirect('device_details', user_device_id=device.user_device_id)
-    else:
-        form = DeviceForm(instance=device)
+        device = get_object_or_404(Device, id=device_id)
 
-    return render(request, 'edit_device.html', {'form': form, 'device': device})
+        if request.method == 'POST':
+            form = DeviceForm(request.POST, instance=device)
+            if form.is_valid():
+                form.save()
+                return redirect('device_details', user_device_id=device.user_device_id)
+        else:
+            form = DeviceForm(instance=device)
 
+        return render(request, 'edit_device.html', {'form': form, 'device': device})
 def device_added(request, device_id):
     # Retrieve the  added device
     device = get_object_or_404(Device, id=device_id)

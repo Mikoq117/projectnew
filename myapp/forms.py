@@ -31,19 +31,20 @@ class DeviceForm(forms.ModelForm):
         empty_label="Select a phone model",  # Placeholder
         required=True,
         label="Model",
-        
+
     )
 
     # Dropdown for device users
-    owner = forms.ModelChoiceField(
-        queryset=DeviceUser.objects.none(),
+    device_user = forms.ModelChoiceField(
+        queryset=DeviceUser.objects.all(),
+        empty_label="Select a device user",
         required=True,
-        label="Device User (Owner)"
+        label="Device User"
     )
 
     class Meta:
         model = Device
-        fields = ['owner', 'model', 'warranty_end_date']  # Fields to display in the form
+        fields = ['device_user', 'model', 'warranty_end_date']  # Fields to display in the form
         widgets = {
             'warranty_end_date': forms.DateInput(attrs={'type': 'date'}),  # a date picker
         }
@@ -54,7 +55,7 @@ class DeviceForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             # Populate the owner field
-            self.fields['owner'].queryset = DeviceUser.objects.filter(app_user=user)
+            self.fields['device_user'].queryset = DeviceUser.objects.filter(app_user=user)
 
     def save(self, commit=True):
         # Custom save method for unique device ID
