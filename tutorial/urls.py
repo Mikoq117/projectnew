@@ -38,6 +38,9 @@ path('export-filtered-data/', views.export_filtered_data, name='export_filtered_
 path('edit-device-user/<int:user_id>/', views.edit_device_user, name='edit_device_user'),
     path('delete-device-user/<int:user_id>/', views.delete_device_user, name='delete_device_user'),
 path('edit-device/<int:device_id>/', views.edit_device, name='edit_device'),
+path('scrape-ipads/', views.scrape_ipads_view, name='scrape_ipads'),
+path('scrape-android-tablets/', views.scrape_android_tablets_view, name='scrape_android_tablets'),
+
 ]
 
 

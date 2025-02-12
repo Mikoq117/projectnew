@@ -41,7 +41,7 @@ class PhoneSpecs(models.Model):
 # Define the Device model (what users make)
 class Device(models.Model):
     app_user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who owns the device
-    owner = models.ForeignKey(DeviceUser, on_delete=models.CASCADE)
+    device_user = models.ForeignKey(DeviceUser, on_delete=models.CASCADE)
     model = models.ForeignKey(PhoneSpecs, on_delete=models.CASCADE)
     user_device_id = models.CharField(max_length=255, unique=True)
     warranty_end_date = models.DateField(null=True, blank=True)

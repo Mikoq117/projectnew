@@ -4,16 +4,6 @@ import requests
 from bs4 import BeautifulSoup  # For scraping
 from myapp.models import PhoneSpecs
 
-
-  # Import the PhoneSpecs model
-
-"""
-Scraper currently set to only scrape the first 15 devices on each pages. 
-Increasing this alot will result in a temp block from GSMArena, so leave as 15 if your just testing!
-
-Next iteration will only fetch phones so that watches and tablets will not be scraped, then amount can be turned up
-"""
-
 # Set up Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tutorial.settings')
 django.setup()
@@ -22,36 +12,40 @@ HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 def save_phone_specs_to_db(phone_data):
     """
-    Save phone specs to the database, and detecting the platform based on the OS field.
+    Save phone specs to the database and detect the platform and device type.
     """
-    # platfrom check
-    os_field = phone_data.get("os", "").lower()  # avoid error
-    if os_field.startswith("ios"):
+    os_field = phone_data.get("os", "").lower()
+
+    # Determine the platform
+    if os_field.startswith("ios") or os_field.startswith("ipados"):
         platform = "iOS"
     elif os_field.startswith("android"):
         platform = "Android"
     else:
-        platform = "Unknown"  # Default for weird entries
+        platform = "Unknown"
+
+    # Determine if it's a phone or a tablet
+    device_type = phone_data.get("device_type", "Phone")  # Default is phone unless stated otherwise
 
     phone, created = PhoneSpecs.objects.get_or_create(
-        name=phone_data["name"],  # Check by unique phone name
+        name=phone_data["name"],
         defaults={
             "release_date": phone_data["release_date"],
             "display_size": phone_data["display_size"],
             "os": phone_data["os"],
-            "platform": platform,  # Save  detected platform
+            "platform": platform,
+            "device_type": device_type  # Save detected type (Phone or Tablet)
         }
     )
     if created:
-        print(f"Saved: {phone.name} ({platform})")
+        print(f"Saved: {phone.name} ({platform}, {device_type})")
     else:
-        print(f"Already exists: {phone.name} ({platform})")
+        print(f"Already exists: {phone.name} ({platform}, {device_type})")
 
-#SCRAPING!!
 
-def fetch_phone_specs(phone_url):
+def fetch_phone_specs(phone_url, device_type="Phone"):
     """
-    Fetches the specs of a phone from its GSMArena page.
+    Fetches the specs of a phone or tablet from its GSMArena page.
     """
     try:
         print(f"Fetching specs for: {phone_url}")
@@ -77,77 +71,97 @@ def fetch_phone_specs(phone_url):
         "release_date": release_date,
         "display_size": display_size,
         "os": os,
+        "device_type": device_type  # Pass device type to distinguish tablets from phones
     }
 
 
-def fetch_phone_models(brand_url, limit=15):
+def fetch_phone_models(brand_url, device_type="Phone", limit=15):
     """
     Generic function to fetch phone models for a specific brand.
     :param brand_url: URL of the brand page on GSMArena.
-    :param limit: Limit the number of models to fetch. - IMPORTANT TO NOT BE BLOCKED BY GSM
+    :param device_type: "Phone" or "Tablet" to classify the device.
+    :param limit: Limit the number of models to fetch to avoid bans.
     :return: List of phone models.
     """
-    print(f"Fetching phones from: {brand_url}")
+    print(f"Fetching {device_type}s from: {brand_url}")
     try:
         response = requests.get(brand_url, headers=HEADERS, timeout=10)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching brand page: {e}")
+        print(f"Error fetching {device_type} brand page: {e}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Selector for phone models
     model_links = soup.select("div.makers ul li a")
-    print(f"Found {len(model_links)} phone models.")  # DebuggGGG
+    print(f"Found {len(model_links)} {device_type} models.")
 
     phone_models = []
     for model in model_links[:limit]:
         model_name = model.text.strip()
         model_url = f"https://www.gsmarena.com/{model['href']}"
-        phone_models.append({"name": model_name, "url": model_url})
-        print(f"Fetched model: {model_name}, URL: {model_url}")  # Debug
+        phone_models.append({"name": model_name, "url": model_url, "device_type": device_type})
+        print(f"Fetched model: {model_name}, URL: {model_url}")
 
-    print(f"Fetched {len(phone_models)} phone models in total.")
+    print(f"Fetched {len(phone_models)} {device_type} models in total.")
     return phone_models
 
 
 def scrape_samsung():
-    """
-    Scrape Samsung phone models and save them to the database AS ANDROIDS
-
-    """
+    """Scrape Samsung phone models and save them as 'Android Phones'."""
     samsung_url = "https://www.gsmarena.com/samsung-phones-9.php"
     print("Starting Samsung scraper...")
-    phone_models = fetch_phone_models(samsung_url, limit=15)  #LIMIT CAN BE CHANGED BUT BE CAREFUL
+    phone_models = fetch_phone_models(samsung_url, device_type="Phone", limit=15)
     for phone in phone_models:
-        specs = fetch_phone_specs(phone["url"])
+        specs = fetch_phone_specs(phone["url"], device_type="Phone")
         if specs:
-            save_phone_specs_to_db(specs) # Pass platform='Android'
+            save_phone_specs_to_db(specs)
     print("Samsung scraping completed!")
 
 
-
 def scrape_apple():
-    """
-    Scrape Apple iPhone models and save them to the database AS IOSs
-    """
+    """Scrape Apple iPhone models and save them as 'iOS Phones'."""
     apple_url = "https://www.gsmarena.com/apple-phones-48.php"
     print("Starting Apple scraper...")
-    phone_models = fetch_phone_models(apple_url, limit=15) #LIMIT CAN BE CHANGED BUT BE CAREFUL
+    phone_models = fetch_phone_models(apple_url, device_type="Phone", limit=15)
     for phone in phone_models:
-        specs = fetch_phone_specs(phone["url"])
+        specs = fetch_phone_specs(phone["url"], device_type="Phone")
         if specs:
-            save_phone_specs_to_db(specs)  # Pass platform='iOS'
+            save_phone_specs_to_db(specs)
     print("Apple scraping completed!")
 
 
+def scrape_ipads():
+    """Scrape Apple iPad models and save them as 'iOS Tablets'."""
+    ipad_url = "https://www.gsmarena.com/results.php3?mode=tablet&sMakers=48"
+    print("Starting iPad scraper...")
+    tablet_models = fetch_phone_models(ipad_url, device_type="Tablet", limit=15)
+    for tablet in tablet_models:
+        specs = fetch_phone_specs(tablet["url"], device_type="Tablet")
+        if specs:
+            save_phone_specs_to_db(specs)
+    print("iPad scraping completed!")
+
+
+def scrape_android_tablets():
+    """Scrape Android tablet models and save them as 'Android Tablets'."""
+    android_tablet_url = "https://www.gsmarena.com/results.php3?mode=tablet&nYearMin=2015&sMakers=9&sAvailabilities=1,3"
+    print("Starting Android Tablet scraper...")
+    tablet_models = fetch_phone_models(android_tablet_url, device_type="Tablet", limit=15)
+    for tablet in tablet_models:
+        specs = fetch_phone_specs(tablet["url"], device_type="Tablet")
+        if specs:
+            save_phone_specs_to_db(specs)
+    print("Android Tablet scraping completed!")
+
+
 def scrape_all():
-    """
-    Scrape both
-    """
+    """Scrape both phones and tablets."""
     scrape_samsung()
     scrape_apple()
+    scrape_ipads()
+    scrape_android_tablets()
 
 
 if __name__ == "__main__":

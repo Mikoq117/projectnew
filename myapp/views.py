@@ -27,7 +27,7 @@ from .models import PhoneSpecs
 
 from django.contrib import messages
 
-
+from .scraper import scrape_ipads, scrape_android_tablets
 from .forms import DeviceForm
 from .models import Device
 
@@ -155,6 +155,51 @@ def start_scraper_apple(request):
     except Exception as e:
         messages.error(request, f"Error starting Apple scraper: {e}")
     return redirect('admin_dashboard')
+
+
+# Check if the user is an admin
+def is_admin(user):
+    return user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+def scrape_ipads_view(request):
+    """
+    View to start the iPad scraping process.
+    Runs the scraper in a separate thread to prevent blocking.
+    """
+    try:
+        thread = threading.Thread(target=scrape_ipads)
+        thread.start()
+        messages.success(request, "iPad scraper started successfully!")
+    except Exception as e:
+        messages.error(request, f"Error starting iPad scraper: {e}")
+
+    return redirect('admin_dashboard')
+
+@login_required
+@user_passes_test(is_admin)
+def scrape_android_tablets_view(request):
+    """
+    View to start the Android Tablet scraping process.
+    Runs the scraper in a separate thread to prevent blocking.
+    """
+    try:
+        thread = threading.Thread(target=scrape_android_tablets)
+        thread.start()
+        messages.success(request, "Android Tablet scraper started successfully!")
+    except Exception as e:
+        messages.error(request, f"Error starting Android Tablet scraper: {e}")
+
+    return redirect('admin_dashboard')
+
+
+
+
+
+
+
+
 
 
 def register(request):
