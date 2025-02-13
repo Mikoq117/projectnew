@@ -17,7 +17,8 @@ import threading
   # Import your scraper function
 
 from .forms import DeviceForm  # Import the form
-
+from .models import Device, PhoneSpecs, DeviceUser
+from .forms import DeviceForm
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Device, DeviceUser
@@ -58,6 +59,30 @@ def device_user_list(request):
         form = DeviceUserForm()
 
     return render(request, 'device_user_list.html', {'device_users': device_users, 'form': form})
+
+
+@login_required
+def add_device(request):
+    if request.method == "POST":
+        form = DeviceForm(request.POST, user=request.user)
+        if form.is_valid():
+            device = form.save(commit=False)
+            device.app_user = request.user
+            device.save()
+            return redirect("device_added", device_id=device.id)  # Redirect correctly
+        else:
+            print("Form Errors:", form.errors)  # Debugging
+    else:
+        form = DeviceForm(user=request.user)
+
+    return render(request, "add_device.html", {"form": form})
+
+
+
+
+def generate_unique_id():
+    import uuid
+    return str(uuid.uuid4())
 
 
 @login_required
@@ -222,20 +247,9 @@ def device_list(request):
 
 
 # Add device view
-@login_required
-def add_device(request):
-    if request.method == 'POST':
-        form = DeviceForm(request.POST, user=request.user)  # Pass the logged-in user
-        if form.is_valid():
-            device = form.save(commit=False)
-            device.app_user = request.user  # Link the device to the logged-in user
-            device.user_device_id = Device.generate_unique_id(request.user)  # Generate unique ID
-            device.save()
-            return redirect('device_added', device_id=device.id)
-    else:
-        form = DeviceForm(user=request.user)  # Pass the logged-in user
 
-    return render(request, 'add_device.html', {'form': form})
+
+
 
 
 def generate_unique_id():
@@ -285,19 +299,12 @@ def edit_device(request, device_id):
             form = DeviceForm(instance=device)
 
         return render(request, 'edit_device.html', {'form': form, 'device': device})
+@login_required
 def device_added(request, device_id):
-    # Retrieve the  added device
-    device = get_object_or_404(Device, id=device_id)
 
-    # Calculate warranty time left
-    warranty_time_left = device.warranty_time_left()
 
-    # Pass the device and warranty info to the template
-    return render(request, 'device_added.html', {
-        'device': device,
-        'warranty_time_left': warranty_time_left
-    })
-
+        device = get_object_or_404(Device, id=device_id, app_user=request.user)
+        return render(request, 'device_added.html', {'device': device})
 
 
 def reports(request):
@@ -322,7 +329,7 @@ def export_excel(request):
     for device in devices:
         writer.writerow([
             device.model.name,
-            device.owner,
+            device.device_user,
             device.user_device_id,
             device.warranty_end_date,
             device.warranty_time_left(),

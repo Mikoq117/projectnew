@@ -19,6 +19,16 @@ class DeviceUser(models.Model):
         return self.full_name  # Show the full name when printing or displaying the object
 
 # Define the PhoneSpecs model for saving
+
+
+
+# Define the Device model (what users make)
+from django.db import models
+from django.contrib.auth.models import User
+
+
+
+
 class PhoneSpecs(models.Model):
     unique_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
@@ -27,35 +37,45 @@ class PhoneSpecs(models.Model):
     os = models.CharField(max_length=100, null=True, blank=True)
     platform = models.CharField(
         max_length=10,
-        choices=[('iOS', 'iOS'), ('Android', 'Android')],  # Platform options: iOS or Android
-        default='Android' # defaults to android
+        choices=[('iOS', 'iOS'), ('Android', 'Android')],
+        default='Android'
     )
-
-    class Meta:
-        app_label = 'myapp'  # label myapp cos of error
+    device_type = models.CharField(
+        max_length=10,
+        choices=[('Phone', 'Phone'), ('Tablet', 'Tablet')],
+        default='Phone'
+    )
 
     def __str__(self):
         return self.name
 
 
-# Define the Device model (what users make)
+
+
+
 class Device(models.Model):
-    app_user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who owns the device
-    device_user = models.ForeignKey(DeviceUser, on_delete=models.CASCADE)
-    model = models.ForeignKey(PhoneSpecs, on_delete=models.CASCADE)
-    user_device_id = models.CharField(max_length=255, unique=True)
+    app_user = models.ForeignKey(User, on_delete=models.CASCADE)  # Ensure each device belongs to a user
+    device_user = models.ForeignKey("DeviceUser", on_delete=models.CASCADE)
+    model = models.ForeignKey("PhoneSpecs", on_delete=models.CASCADE)
+    user_device_id = models.CharField(max_length=255, unique=True)  # Unique device ID
     warranty_end_date = models.DateField(null=True, blank=True)
-
-
 
     @staticmethod
     def generate_unique_id(user):
         """
-        makes a unique ID for a device based on the user ID and the count of their current devices.
-
+        Generates a unique device ID based on the user's ID and their current device count.
         """
-        device_count = Device.objects.filter(app_user=user).count()  # Count device
-        return f"{user.id}-{device_count + 1}"  # Generate  ID
+        device_count = Device.objects.filter(app_user=user).count()  # Count the user's devices
+        return f"{user.id}-{device_count + 1}"  # Generate unique ID
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to ensure user_device_id is assigned automatically.
+        """
+        if not self.user_device_id:  # Ensure ID is only generated if missing
+            self.user_device_id = Device.generate_unique_id(self.app_user)  # Assign the unique ID
+        super().save(*args, **kwargs)  # Call the original save method
+
 
     def warranty_time_left(self):
         """

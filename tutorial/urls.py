@@ -22,7 +22,7 @@ path('dashboard/', views.dashboard, name='dashboard'),  # Dashboard page
 
     path('device-added/<int:device_id>/', views.device_added, name='device_added'),
 
-path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),  # Admin dashboard URL
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),  # Admin dashboard URL
     path('start-scraper-all/', views.start_scraper_all, name='start_scraper_all'),
     path('start-scraper-samsung/', views.start_scraper_samsung, name='start_scraper_samsung'),
     path('start-scraper-apple/', views.start_scraper_apple, name='start_scraper_apple'),

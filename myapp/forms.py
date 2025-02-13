@@ -1,68 +1,57 @@
+import uuid  # For generating unique device IDs
+from django import forms  # Django forms module
+from .models import Device, PhoneSpecs, DeviceUser  # Import necessary models
 
-
-#import id and models
-
-import uuid
-from django import forms
-from .models import Device, PhoneSpecs
-from django import forms
-from .models import DeviceUser
-
-#define form
-
-
-import uuid  # For generating unique IDs
-from django import forms
-from .models import Device, PhoneSpecs, DeviceUser
-
-
-# Form for creating or updating Device Users
+# ✅ Form for creating or updating Device Users
 class DeviceUserForm(forms.ModelForm):
     class Meta:
         model = DeviceUser
-        fields = ['full_name', 'position', 'location', 'phone_number', 'email']  # Fields to display
+        fields = ['full_name', 'position', 'location', 'phone_number', 'email']
 
-
-# Form for adding devices with dropdowns for model and owner
 class DeviceForm(forms.ModelForm):
-    # Dropdown for phone models
-    model = forms.ModelChoiceField(
-        queryset=PhoneSpecs.objects.all(),  # Fetch all PhoneSpecs objects
-        empty_label="Select a phone model",  # Placeholder
-        required=True,
-        label="Model",
+    """Form for adding devices with filtered dropdowns for model and user."""
 
-    )
-
-    # Dropdown for device users
     device_user = forms.ModelChoiceField(
         queryset=DeviceUser.objects.all(),
         empty_label="Select a device user",
         required=True,
-        label="Device User"
+        label="Device User",
+    widget = forms.Select(attrs={'id': 'id_model'})
+    )
+
+    model = forms.ModelChoiceField(
+        queryset=PhoneSpecs.objects.none(),  # Set to None initially
+        empty_label="Select a phone model",
+        required=True,
+        label="Model"
     )
 
     class Meta:
         model = Device
-        fields = ['device_user', 'model', 'warranty_end_date']  # Fields to display in the form
+        fields = ['device_user', 'model', 'warranty_end_date']
         widgets = {
-            'warranty_end_date': forms.DateInput(attrs={'type': 'date'}),  # a date picker
+            'warranty_end_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
     def __init__(self, *args, **kwargs):
-        # Retrieve the logged-in user from the form initialization
-        user = kwargs.pop('user', None)
+        """Dynamically filter device user queryset based on logged-in user."""
+        user = kwargs.pop('user', None)  # Extract user if provided
         super().__init__(*args, **kwargs)
+
         if user:
-            # Populate the owner field
             self.fields['device_user'].queryset = DeviceUser.objects.filter(app_user=user)
 
+        # Load all phone models dynamically
+        self.fields['model'].queryset = PhoneSpecs.objects.all()
+
     def save(self, commit=True):
-        # Custom save method for unique device ID
-        instance = super().save(commit=False)  # Create the instance but don't save it yet
-        if not instance.user_device_id:  # Check if the unique ID is not set
-            instance.user_device_id = str(uuid.uuid4())  # Generate a new unique ID
+        """
+        Ensures the correct unique ID is set by deferring to the Device model's save method.
+        """
+        instance = super().save(commit=False)  # Get instance but don't save yet
+
         if commit:
-            instance.save()  # Save the instance to the database
+            instance.save()  # Let `models.py` handle the unique ID assignment
+
         return instance  # Return the saved instance
 
