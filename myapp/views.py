@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 import threading
   # Import your scraper function
-
+from datetime import date, timedelta
 from .forms import DeviceForm  # Import the form
 from .models import Device, PhoneSpecs, DeviceUser
 from .forms import DeviceForm
@@ -287,7 +287,7 @@ def generate_unique_id():
 @login_required
 def dashboard(request):
     """
-    Dashboard view to show device statistics.
+    Dashboard view to show device statistics, including warranty alerts.
     """
     devices = Device.objects.filter(app_user=request.user)
 
@@ -304,12 +304,20 @@ def dashboard(request):
     phone_count = devices.filter(model__device_type="Phone").count()
 
     # Warranty status calculation
-    from datetime import date
     today = date.today()
     active_warranty = devices.filter(warranty_end_date__gte=today).count()
     expired_warranty = devices.filter(warranty_end_date__lt=today).count()
 
-    # Sample data for custom chart (replace with real logic)
+    # Warranties expiring within the next 30 days
+    upcoming_expiry_threshold = today + timedelta(days=90)
+    expiring_devices = devices.filter(
+        warranty_end_date__isnull=False,
+        warranty_end_date__lte=upcoming_expiry_threshold,
+        warranty_end_date__gte=today
+    )
+    expiring_warranty_count = expiring_devices.count()
+
+    # Sample data for custom chart (replace with real logic if needed)
     sample_data1 = 10
     sample_data2 = 5
 
@@ -322,11 +330,14 @@ def dashboard(request):
         "phone_count": phone_count,
         "active_warranty": active_warranty,
         "expired_warranty": expired_warranty,
+        "expiring_warranties": expiring_warranty_count,  # New counter
+        "expiring_devices": expiring_devices,  # Pass list for table display
         "sample_data1": sample_data1,
         "sample_data2": sample_data2,
     }
 
     return render(request, "dashboard.html", context)
+
 
 #delete device view
 @login_required

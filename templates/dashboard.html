@@ -53,6 +53,15 @@
             text-align: center;
             min-width: 150px;
         }
+        .warning-box {
+            background-color: orange;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+            min-width: 150px;
+        }
         .charts-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -64,7 +73,7 @@
         .chart-box {
             width: 100%;
             max-width: 500px;
-            height: 400px; /* Increased height */
+            height: 400px;
             background: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -72,7 +81,39 @@
         }
         .chart-box canvas {
             width: 100% !important;
-            height: 380px !important; /* Ensure enough space */
+            height: 380px !important;
+        }
+        .warranty-box {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            background: orange;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            overflow-y: auto;
+        }
+        .warranty-box h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .expired-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .expired-list li {
+            background: white;
+            color: black;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: left;
         }
     </style>
 </head>
@@ -89,7 +130,7 @@
             <a href="{% url 'logout' %}"><button style="background: #dc3545; color: white;">Logout</button></a>
         </div>
 
-        <!-- Counters -->
+        <!-- Device Counts -->
         <div class="device-counts">
             <div class="count-box">
                 <h2>{{ total_devices|default:"0" }}</h2>
@@ -104,29 +145,38 @@
         <!-- Device Insights -->
         <h2>Device Insights</h2>
         <div class="charts-container">
-            <div class="chart-box">
-                <canvas id="platformChart"></canvas>
-            </div>
-            <div class="chart-box">
-                <canvas id="deviceTypeChart"></canvas>
-            </div>
-            <div class="chart-box">
-                <canvas id="warrantyChart"></canvas>
-            </div>
-            <div class="chart-box">
-                <canvas id="customChart"></canvas>
+            <div class="chart-box"><canvas id="platformChart"></canvas></div>
+            <div class="chart-box"><canvas id="deviceTypeChart"></canvas></div>
+            <div class="chart-box"><canvas id="warrantyChart"></canvas></div>
+
+            <!-- Expiring Warranties List -->
+            <div class="warranty-box">
+                <h3>⚠️ Expiring Warranties (Next 90 Days)</h3>
+                <h2 style="text-align: center;">{{ expiring_warranties|default:"0" }}</h2>
+                <ul class="expired-list">
+                    {% for device in expiring_devices %}
+                        <li>
+                            <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
+                            <small>User: {{ device.device_user.full_name }}</small> <br>
+                            <small>Expires: {{ device.warranty_end_date }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if not expiring_devices %}
+                    <p style="text-align: center;">✅ No upcoming warranty expirations.</p>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("🚀 Chart.js Initialized"); // Debugging check
+            console.log("🚀 Chart.js Initialized");
 
             function createChart(canvasId, labels, data, colors) {
                 var ctx = document.getElementById(canvasId);
                 if (ctx) {
-                    console.log(`📊 Creating Chart: ${canvasId}`); // Debugging check
+                    console.log(`📊 Creating Chart: ${canvasId}`);
                     new Chart(ctx.getContext('2d'), {
                         type: 'pie',
                         data: {
@@ -143,7 +193,6 @@
                 }
             }
 
-            // Debugging Data
             console.log("iOS Count:", {{ ios_count|default:0 }});
             console.log("Android Count:", {{ android_count|default:0 }});
             console.log("Tablet Count:", {{ tablet_count|default:0 }});
@@ -151,32 +200,22 @@
             console.log("Active Warranty:", {{ active_warranty|default:0 }});
             console.log("Expired Warranty:", {{ expired_warranty|default:0 }});
 
-            // Platform Distribution Chart
             createChart("platformChart",
                 ['iOS', 'Android'],
                 [{{ ios_count|default:0 }}, {{ android_count|default:0 }}],
                 ['#FF6384', '#36A2EB']
             );
 
-            // Device Type Chart (Tablet vs Phone)
             createChart("deviceTypeChart",
                 ['Tablet', 'Phone'],
                 [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}],
                 ['#4CAF50', '#FFC107']
             );
 
-            // Warranty Status Chart
             createChart("warrantyChart",
                 ['Active', 'Expired'],
                 [{{ active_warranty|default:0 }}, {{ expired_warranty|default:0 }}],
                 ['#2E8B57', '#DC3545']
-            );
-
-            // Custom Chart (Example Data)
-            createChart("customChart",
-                ['Sample Data 1', 'Sample Data 2'],
-                [{{ sample_data1|default:0 }}, {{ sample_data2|default:0 }}],
-                ['#FF8C00', '#8A2BE2']
             );
         });
     </script>
