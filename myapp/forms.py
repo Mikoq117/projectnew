@@ -9,21 +9,22 @@ class DeviceUserForm(forms.ModelForm):
         fields = ['full_name', 'position', 'location', 'phone_number', 'email']
 
 class DeviceForm(forms.ModelForm):
-    """Form for adding devices with filtered dropdowns for model and user."""
+    """
+    Form for adding devices with a dropdown filter for models.
+    """
+
+    model = forms.ModelChoiceField(
+        queryset=PhoneSpecs.objects.none(),  # Set default empty, dynamically filled in view
+        empty_label="Select a phone model",
+        required=True,
+        label="Model",
+    )
 
     device_user = forms.ModelChoiceField(
         queryset=DeviceUser.objects.all(),
         empty_label="Select a device user",
         required=True,
-        label="Device User",
-    widget = forms.Select(attrs={'id': 'id_model'})
-    )
-
-    model = forms.ModelChoiceField(
-        queryset=PhoneSpecs.objects.none(),  # Set to None initially
-        empty_label="Select a phone model",
-        required=True,
-        label="Model"
+        label="Device User"
     )
 
     class Meta:
@@ -34,15 +35,10 @@ class DeviceForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        """Dynamically filter device user queryset based on logged-in user."""
-        user = kwargs.pop('user', None)  # Extract user if provided
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-
         if user:
             self.fields['device_user'].queryset = DeviceUser.objects.filter(app_user=user)
-
-        # Load all phone models dynamically
-        self.fields['model'].queryset = PhoneSpecs.objects.all()
 
     def save(self, commit=True):
         """

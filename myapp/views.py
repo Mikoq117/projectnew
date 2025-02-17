@@ -5,7 +5,9 @@ from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Device
-
+import json
+from django.db.models import Count
+from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm
 
 from django.shortcuts import render, redirect
@@ -63,19 +65,42 @@ def device_user_list(request):
 
 @login_required
 def add_device(request):
+    """
+    View for adding a new device with filtering functionality.
+    """
+    # Get the selected filter from the URL query parameter
+    selected_filter = request.GET.get('filter', 'all')
+
+    # Base queryset (default: show all devices)
+    queryset = PhoneSpecs.objects.all()
+
+    # Apply filtering based on the selected filter
+    if selected_filter == "iphone":
+        queryset = queryset.filter(platform="iOS", device_type="Phone")
+    elif selected_filter == "samsung":
+        queryset = queryset.filter(platform="Android", device_type="Phone")
+    elif selected_filter == "ipad":
+        queryset = queryset.filter(platform="iOS", device_type="Tablet")
+    elif selected_filter == "samsung-tab":
+        queryset = queryset.filter(platform="Android", device_type="Tablet")
+
+    # Initialize the form with the filtered queryset
     if request.method == "POST":
         form = DeviceForm(request.POST, user=request.user)
+        form.fields['model'].queryset = queryset  # Apply filtered queryset
         if form.is_valid():
             device = form.save(commit=False)
-            device.app_user = request.user
+            device.user_device_id = Device.generate_unique_id(request.user)  # Assign a unique ID
+            device.app_user = request.user  # Assign the logged-in user
             device.save()
-            return redirect("device_added", device_id=device.id)  # Redirect correctly
+            return redirect("device_added", device_id=device.id)  # Redirect after adding
         else:
-            print("Form Errors:", form.errors)  # Debugging
+            print(form.errors)  # Debugging: Print errors if form is invalid
     else:
         form = DeviceForm(user=request.user)
+        form.fields['model'].queryset = queryset  # Apply filtered queryset
 
-    return render(request, "add_device.html", {"form": form})
+    return render(request, "add_device.html", {"form": form, "selected_filter": selected_filter})
 
 
 
@@ -258,9 +283,50 @@ def generate_unique_id():
 
 
 #dashboard
+
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    """
+    Dashboard view to show device statistics.
+    """
+    devices = Device.objects.filter(app_user=request.user)
+
+    # Count total devices and device users
+    total_devices = devices.count()
+    total_device_users = devices.values("device_user").distinct().count()
+
+    # Count platform distribution
+    ios_count = devices.filter(model__platform="iOS").count()
+    android_count = devices.filter(model__platform="Android").count()
+
+    # Count device types
+    tablet_count = devices.filter(model__device_type="Tablet").count()
+    phone_count = devices.filter(model__device_type="Phone").count()
+
+    # Warranty status calculation
+    from datetime import date
+    today = date.today()
+    active_warranty = devices.filter(warranty_end_date__gte=today).count()
+    expired_warranty = devices.filter(warranty_end_date__lt=today).count()
+
+    # Sample data for custom chart (replace with real logic)
+    sample_data1 = 10
+    sample_data2 = 5
+
+    context = {
+        "total_devices": total_devices,
+        "total_device_users": total_device_users,
+        "ios_count": ios_count,
+        "android_count": android_count,
+        "tablet_count": tablet_count,
+        "phone_count": phone_count,
+        "active_warranty": active_warranty,
+        "expired_warranty": expired_warranty,
+        "sample_data1": sample_data1,
+        "sample_data2": sample_data2,
+    }
+
+    return render(request, "dashboard.html", context)
 
 #delete device view
 @login_required
@@ -286,19 +352,64 @@ def device_details(request, user_device_id):
     })
 
 
+@login_required
 def edit_device(request, device_id):
+    """
+    View for editing an existing device with filtering functionality.
+    """
+    device = get_object_or_404(Device, id=device_id, app_user=request.user)
 
-        device = get_object_or_404(Device, id=device_id)
+    # Get filter selection from query parameter
+    selected_filter = request.GET.get('filter', 'all')
 
-        if request.method == 'POST':
-            form = DeviceForm(request.POST, instance=device)
-            if form.is_valid():
-                form.save()
-                return redirect('device_details', user_device_id=device.user_device_id)
-        else:
-            form = DeviceForm(instance=device)
+    # Base queryset (default: show all devices)
+    queryset = PhoneSpecs.objects.all()
 
-        return render(request, 'edit_device.html', {'form': form, 'device': device})
+    # Apply filtering based on the selected filter
+    if selected_filter == "iphone":
+        queryset = queryset.filter(platform="iOS", device_type="Phone")
+    elif selected_filter == "samsung":
+        queryset = queryset.filter(platform="Android", device_type="Phone")
+    elif selected_filter == "ipad":
+        queryset = queryset.filter(platform="iOS", device_type="Tablet")
+    elif selected_filter == "samsung-tab":
+        queryset = queryset.filter(platform="Android", device_type="Tablet")
+
+    # Initialize the form with the filtered queryset
+    if request.method == 'POST':
+        form = DeviceForm(request.POST, instance=device, user=request.user)
+        form.fields['model'].queryset = queryset  # Apply filtered queryset
+        if form.is_valid():
+            form.save()
+            return redirect('device_details', user_device_id=device.user_device_id)
+    else:
+        form = DeviceForm(instance=device, user=request.user)
+        form.fields['model'].queryset = queryset  # Apply filtered queryset
+
+    return render(request, 'edit_device.html', {
+        'form': form,
+        'device': device,
+        'selected_filter': selected_filter
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @login_required
 def device_added(request, device_id):
 

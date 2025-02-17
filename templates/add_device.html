@@ -75,15 +75,15 @@
     <div class="container">
         <h1>Add a New Device</h1>
 
-        <!-- Device Filter Dropdown -->
+        <!-- Device Filter Dropdown (triggers page reload with selected filter) -->
         <div class="form-group">
             <label for="device-filter">Filter by Device Type</label>
-            <select id="device-filter" onchange="filterDevices()">
-                <option value="all">All Devices</option>
-                <option value="iphone">iPhones</option>
-                <option value="samsung">Samsung Phones</option>
-                <option value="ipad">iPads</option>
-                <option value="samsung-tab">Samsung Tablets</option>
+            <select id="device-filter" onchange="applyFilter()">
+                <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
+                <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
+                <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
+                <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
+                <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
             </select>
         </div>
 
@@ -94,10 +94,9 @@
                 {{ form.device_user }}
             </div>
             <div class="form-group">
-    <label for="id_model">Device Model</label>
-    {{ form.model }}  <!-- Use Django's built-in form rendering -->
-</div>
-
+                <label for="id_model">Device Model</label>
+                {{ form.model }}
+            </div>
             <div class="form-group">
                 <label for="id_warranty_end_date">Warranty End Date</label>
                 {{ form.warranty_end_date }}
@@ -113,35 +112,14 @@
     </div>
 
     <script>
-        function filterDevices() {
+        function applyFilter() {
             const selectedFilter = document.getElementById("device-filter").value;
-            const modelDropdown = document.getElementById("device-model");
-            const options = modelDropdown.getElementsByTagName("option");
-
-            for (let i = 0; i < options.length; i++) {
-                let deviceType = options[i].getAttribute("data-device");
-                let platform = options[i].getAttribute("data-type");
-
-                let showOption = false;
-
-                if (selectedFilter === "all") {
-                    showOption = true;
-                } else if (selectedFilter === "iphone" && platform === "iOS" && deviceType === "Phone") {
-                    showOption = true;
-                } else if (selectedFilter === "samsung" && platform === "Android" && deviceType === "Phone") {
-                    showOption = true;
-                } else if (selectedFilter === "ipad" && platform === "iOS" && deviceType === "Tablet") {
-                    showOption = true;
-                } else if (selectedFilter === "samsung-tab" && platform === "Android" && deviceType === "Tablet") {
-                    showOption = true;
-                }
-
-                options[i].style.display = showOption ? "" : "none";
-            }
+            window.location.href = `?filter=${selectedFilter}`; // Reload page with filter
         }
     </script>
 </body>
 </html>
+
 
 
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,50 +13,66 @@
             background-color: #f4f4f9;
         }
         .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
+            max-width: 90%;
+            margin: 40px auto;
             background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .buttons {
+            margin-bottom: 20px;
+        }
+        .buttons a {
+            text-decoration: none;
+            margin: 5px;
+        }
+        .buttons button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .device-counts {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .count-box {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+            min-width: 150px;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 40px;
+            margin-top: 30px;
+            justify-items: center;
+            padding-bottom: 40px;
+        }
+        .chart-box {
+            width: 100%;
+            max-width: 500px;
+            height: 400px; /* Increased height */
+            background: #fff;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin: 30px 0;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        .graph-section {
-            margin-top: 40px;
-            text-align: center;
-            color: #555;
-        }
-        form {
-            display: inline;
+        .chart-box canvas {
+            width: 100% !important;
+            height: 380px !important; /* Ensure enough space */
         }
     </style>
 </head>
@@ -63,28 +80,106 @@
     <div class="container">
         <h1>Welcome to Your Dashboard</h1>
 
-        <div class="button-group">
-            <a href="{% url 'device_list' %}">
-                <button class="btn-primary">Device List</button>
-            </a>
-            <a href="{% url 'device_user_list' %}">
-                <button class="btn-primary">Device-User List</button>
-            </a>
-            <a href="{% url 'reports' %}">
-                <button class="btn-primary">Reports</button>
-            </a>
-            <a href="#">
-                <button class="btn-secondary">AI Device Help</button>
-            </a>
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button class="btn-danger" type="submit">Logout</button>
-            </form>
+        <!-- Buttons -->
+        <div class="buttons">
+            <a href="{% url 'device_list' %}"><button style="background: #007bff; color: white;">Device List</button></a>
+            <a href="{% url 'device_user_list' %}"><button style="background: #228B22; color: white;">Device User List</button></a>
+            <a href="{% url 'reports' %}"><button style="background: #228B22; color: white;">Reports</button></a>
+            <a href="#"><button style="background: #228B22; color: white;">AI Device Help</button></a>
+            <a href="{% url 'logout' %}"><button style="background: #dc3545; color: white;">Logout</button></a>
         </div>
 
-        <div class="graph-section">
-            <p>Graphs and analytics will be displayed here in the future.</p>
+        <!-- Counters -->
+        <div class="device-counts">
+            <div class="count-box">
+                <h2>{{ total_devices|default:"0" }}</h2>
+                <p>Total Devices</p>
+            </div>
+            <div class="count-box">
+                <h2>{{ total_device_users|default:"0" }}</h2>
+                <p>Total Device Users</p>
+            </div>
+        </div>
+
+        <!-- Device Insights -->
+        <h2>Device Insights</h2>
+        <div class="charts-container">
+            <div class="chart-box">
+                <canvas id="platformChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="deviceTypeChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="warrantyChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="customChart"></canvas>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("🚀 Chart.js Initialized"); // Debugging check
+
+            function createChart(canvasId, labels, data, colors) {
+                var ctx = document.getElementById(canvasId);
+                if (ctx) {
+                    console.log(`📊 Creating Chart: ${canvasId}`); // Debugging check
+                    new Chart(ctx.getContext('2d'), {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: colors
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                } else {
+                    console.warn(`⚠️ Canvas Not Found: ${canvasId}`);
+                }
+            }
+
+            // Debugging Data
+            console.log("iOS Count:", {{ ios_count|default:0 }});
+            console.log("Android Count:", {{ android_count|default:0 }});
+            console.log("Tablet Count:", {{ tablet_count|default:0 }});
+            console.log("Phone Count:", {{ phone_count|default:0 }});
+            console.log("Active Warranty:", {{ active_warranty|default:0 }});
+            console.log("Expired Warranty:", {{ expired_warranty|default:0 }});
+
+            // Platform Distribution Chart
+            createChart("platformChart",
+                ['iOS', 'Android'],
+                [{{ ios_count|default:0 }}, {{ android_count|default:0 }}],
+                ['#FF6384', '#36A2EB']
+            );
+
+            // Device Type Chart (Tablet vs Phone)
+            createChart("deviceTypeChart",
+                ['Tablet', 'Phone'],
+                [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}],
+                ['#4CAF50', '#FFC107']
+            );
+
+            // Warranty Status Chart
+            createChart("warrantyChart",
+                ['Active', 'Expired'],
+                [{{ active_warranty|default:0 }}, {{ expired_warranty|default:0 }}],
+                ['#2E8B57', '#DC3545']
+            );
+
+            // Custom Chart (Example Data)
+            createChart("customChart",
+                ['Sample Data 1', 'Sample Data 2'],
+                [{{ sample_data1|default:0 }}, {{ sample_data2|default:0 }}],
+                ['#FF8C00', '#8A2BE2']
+            );
+        });
+    </script>
 </body>
 </html>
+
