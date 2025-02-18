@@ -3,6 +3,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
+import openai
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.conf import settings
 
 from .models import Device
 import json
@@ -489,3 +494,60 @@ def export_filtered_data(request):
             writer.writerow(row)
 
         return response
+
+
+
+
+import requests
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+@csrf_exempt
+def chatbot_view(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            user_message = data.get("message", "")
+
+            if not user_message:
+                return JsonResponse({"error": "Empty message"}, status=400)
+
+            headers = {
+                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                "Content-Type": "application/json"
+            }
+
+            payload = {
+                "model": "openai/gpt-4o-mini",
+                "messages": [
+                    {"role": "system", "content": "You are a business device assistant. You will ask the user for their team-size, budget, required apps and a quick explanation of what they need the devices for. Only recommend phones or tablets. Provide simple, bullet point style answers. Provide the best top 3 best options only"},
+                    {"role": "user", "content": user_message}
+                ]
+            }
+
+            response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+
+            response_data = response.json()
+
+            # Debugging: Print the entire response to see what's wrong
+            print("OpenRouter Response:", response_data)
+
+            if "choices" in response_data:
+                chatbot_reply = response_data["choices"][0]["message"]["content"]
+            else:
+                chatbot_reply = "Sorry, I couldn't process that request."
+
+            return JsonResponse({"reply": chatbot_reply})
+
+        except Exception as e:
+            print(f"Error in chatbot_view: {str(e)}")
+            return JsonResponse({"error": "Internal server error."}, status=500)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
+def help_page(request):
+    return render(request, "help.html")  # Ensure the correct file path

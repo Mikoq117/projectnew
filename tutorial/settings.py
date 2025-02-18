@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp', #adding in django app
+
 ]
 
 MIDDLEWARE = [
@@ -70,6 +72,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tutorial.wsgi.application'
+
+
+
+
+OPENROUTER_API_KEY  = "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"
 
 
 # Database

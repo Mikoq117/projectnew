@@ -3,7 +3,8 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from myapp import views
 from myapp.views import CustomLoginView
-
+from myapp.views import chatbot_view
+from myapp.views import help_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,6 +42,9 @@ path('edit-device/<int:device_id>/', views.edit_device, name='edit_device'),
 path('scrape-ipads/', views.scrape_ipads_view, name='scrape_ipads'),
 path('scrape-android-tablets/', views.scrape_android_tablets_view, name='scrape_android_tablets'),
 
+    path("api/chatbot/", chatbot_view, name="chatbot_api"),  # Add chatbot endpoint
+
+    path("help/", help_page, name="help_page"),  # New help page
 ]
 
 

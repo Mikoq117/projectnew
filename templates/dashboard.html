@@ -7,110 +7,107 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #f8f9fc;
         }
         .container {
             max-width: 90%;
             margin: 40px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         h1 {
             color: #333;
+            margin-bottom: 20px;
+        }
+        .divider {
+            height: 3px;
+            background: #ddd;
+            margin: 25px 0;
         }
         .buttons {
-            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
         }
         .buttons a {
             text-decoration: none;
-            margin: 5px;
         }
         .buttons button {
-            padding: 10px 15px;
+            padding: 12px 18px;
             font-size: 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .buttons button:hover {
+            opacity: 0.85;
         }
         .device-counts {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .count-box {
             background-color: #007bff;
             color: white;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             flex: 1;
             text-align: center;
             min-width: 150px;
+            font-size: 16px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
         .warning-box {
             background-color: orange;
             color: black;
-            padding: 20px;
-            border-radius: 8px;
-            flex: 1;
-            text-align: center;
-            min-width: 150px;
         }
         .charts-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap: 40px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-gap: 30px;
+            margin-top: 20px;
             justify-items: center;
-            padding-bottom: 40px;
+            padding-bottom: 30px;
         }
-        .chart-box {
+        .chart-box, .warranty-box {
             width: 100%;
-            max-width: 500px;
-            height: 400px;
+            max-width: 450px;
             background: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .chart-box canvas {
-            width: 100% !important;
-            height: 380px !important;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
         .warranty-box {
-            width: 100%;
-            max-width: 500px;
-            height: 400px;
             background: orange;
             color: black;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: left;
             overflow-y: auto;
         }
         .warranty-box h3 {
             text-align: center;
-            margin-bottom: 10px;
         }
         .expired-list {
             list-style-type: none;
             padding: 0;
             margin-top: 10px;
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
         }
         .expired-list li {
             background: white;
-            color: black;
-            padding: 8px;
-            margin-bottom: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
             border-radius: 5px;
             font-size: 14px;
             text-align: left;
@@ -121,16 +118,16 @@
     <div class="container">
         <h1>Welcome to Your Dashboard</h1>
 
-        <!-- Buttons -->
         <div class="buttons">
             <a href="{% url 'device_list' %}"><button style="background: #007bff; color: white;">Device List</button></a>
-            <a href="{% url 'device_user_list' %}"><button style="background: #228B22; color: white;">Device User List</button></a>
-            <a href="{% url 'reports' %}"><button style="background: #228B22; color: white;">Reports</button></a>
-            <a href="#"><button style="background: #228B22; color: white;">AI Device Help</button></a>
+            <a href="{% url 'device_user_list' %}"><button style="background: #28a745; color: white;">Device User List</button></a>
+            <a href="{% url 'reports' %}"><button style="background: #17a2b8; color: white;">Reports</button></a>
+            <a href="{% url 'help_page' %}"><button style="background: #ffc107; color: black;">AI Device Help</button></a>
             <a href="{% url 'logout' %}"><button style="background: #dc3545; color: white;">Logout</button></a>
         </div>
 
-        <!-- Device Counts -->
+        <div class="divider"></div>
+
         <div class="device-counts">
             <div class="count-box">
                 <h2>{{ total_devices|default:"0" }}</h2>
@@ -142,14 +139,13 @@
             </div>
         </div>
 
-        <!-- Device Insights -->
+        <div class="divider"></div>
+
         <h2>Device Insights</h2>
         <div class="charts-container">
             <div class="chart-box"><canvas id="platformChart"></canvas></div>
             <div class="chart-box"><canvas id="deviceTypeChart"></canvas></div>
             <div class="chart-box"><canvas id="warrantyChart"></canvas></div>
-
-            <!-- Expiring Warranties List -->
             <div class="warranty-box">
                 <h3>⚠️ Expiring Warranties (Next 90 Days)</h3>
                 <h2 style="text-align: center;">{{ expiring_warranties|default:"0" }}</h2>
@@ -171,12 +167,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("🚀 Chart.js Initialized");
-
             function createChart(canvasId, labels, data, colors) {
                 var ctx = document.getElementById(canvasId);
                 if (ctx) {
-                    console.log(`📊 Creating Chart: ${canvasId}`);
                     new Chart(ctx.getContext('2d'), {
                         type: 'pie',
                         data: {
@@ -188,37 +181,12 @@
                         },
                         options: { responsive: true, maintainAspectRatio: false }
                     });
-                } else {
-                    console.warn(`⚠️ Canvas Not Found: ${canvasId}`);
                 }
             }
-
-            console.log("iOS Count:", {{ ios_count|default:0 }});
-            console.log("Android Count:", {{ android_count|default:0 }});
-            console.log("Tablet Count:", {{ tablet_count|default:0 }});
-            console.log("Phone Count:", {{ phone_count|default:0 }});
-            console.log("Active Warranty:", {{ active_warranty|default:0 }});
-            console.log("Expired Warranty:", {{ expired_warranty|default:0 }});
-
-            createChart("platformChart",
-                ['iOS', 'Android'],
-                [{{ ios_count|default:0 }}, {{ android_count|default:0 }}],
-                ['#FF6384', '#36A2EB']
-            );
-
-            createChart("deviceTypeChart",
-                ['Tablet', 'Phone'],
-                [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}],
-                ['#4CAF50', '#FFC107']
-            );
-
-            createChart("warrantyChart",
-                ['Active', 'Expired'],
-                [{{ active_warranty|default:0 }}, {{ expired_warranty|default:0 }}],
-                ['#2E8B57', '#DC3545']
-            );
+            createChart("platformChart", ['iOS', 'Android'], [{{ ios_count|default:0 }}, {{ android_count|default:0 }}], ['#FF6384', '#36A2EB']);
+            createChart("deviceTypeChart", ['Tablet', 'Phone'], [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}], ['#4CAF50', '#FFC107']);
+            createChart("warrantyChart", ['Active', 'Expired'], [{{ active_warranty|default:0 }}, {{ expired_warranty|default:0 }}], ['#2E8B57', '#DC3545']);
         });
     </script>
 </body>
 </html>
-
