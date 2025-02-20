@@ -522,7 +522,9 @@ def chatbot_view(request):
             payload = {
                 "model": "openai/gpt-4o-mini",
                 "messages": [
-                    {"role": "system", "content": "You are a business device assistant. You will ask the user for their team-size, budget, required apps and a quick explanation of what they need the devices for. Only recommend phones or tablets. Provide simple, bullet point style answers. Provide the best top 3 best options only"},
+                    {"role": "system", "content": "You are an assistant that helps recommend new devices for a business. Recommend the top 3 and only recommend Samsung or Apple. Dot have an into to you answer but have a short conclusion.  "},
+
+
                     {"role": "user", "content": user_message}
                 ]
             }

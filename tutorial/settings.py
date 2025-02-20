@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -74,9 +75,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tutorial.wsgi.application'
 
 
+# Load environment variables from .env file
+load_dotenv()
 
+# Securely access the API key
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-OPENROUTER_API_KEY  = "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"
+# Ensure it is loaded correctly
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY is missing! Set it in .env")
 
 
 # Database
