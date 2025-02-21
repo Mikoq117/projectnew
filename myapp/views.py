@@ -48,6 +48,7 @@ from .models import DeviceUser
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.db.models import Q
 @login_required
 def device_user_list(request):
     # Fetch device users for the logged-in user
@@ -296,7 +297,6 @@ def dashboard(request):
     total_devices = devices.count()
     total_device_users = devices.values("device_user").distinct().count()
 
-    # Platform counts for pie-charts
     ios_count = devices.filter(model__platform="iOS").count()
     android_count = devices.filter(model__platform="Android").count()
 
@@ -304,9 +304,11 @@ def dashboard(request):
     phone_count = devices.filter(model__device_type="Phone").count()
 
     today = date.today()
-    upcoming_expiry_threshold = today + timedelta(days=90)
+    # Consider a warranty active if it's in the future OR if no warranty date is entered.
+    active_warranty = devices.filter(Q(warranty_end_date__gte=today) | Q(warranty_end_date__isnull=True)).count()
+    expired_warranty = devices.filter(warranty_end_date__lt=today).count()
 
-    # Warranty expiry calculation (unchanged)
+    upcoming_expiry_threshold = today + timedelta(days=90)
     expiring_devices = devices.filter(
         warranty_end_date__isnull=False,
         warranty_end_date__lte=upcoming_expiry_threshold,
@@ -314,7 +316,7 @@ def dashboard(request):
     )
     expiring_warranty_count = expiring_devices.count()
 
-    # OS support status: build lists for both expiring and expired OS support
+    # OS support status calculation
     os_expiring_devices = []
     os_expired_devices = []
     for device in devices:
@@ -325,12 +327,12 @@ def dashboard(request):
             elif os_end_date.date() < today:
                 os_expired_devices.append(device)
 
-    # Combine both OS support lists into one
     combined_os_devices = os_expiring_devices + os_expired_devices
     combined_os_count = len(combined_os_devices)
-
-    # Remaining devices with active OS support (for the pie chart)
     remaining_os_support = total_devices - combined_os_count
+
+    # Recent devices using ID ordering as a proxy for "recent"
+    recent_devices = devices.order_by("-id")[:5]
 
     context = {
         "total_devices": total_devices,
@@ -339,16 +341,19 @@ def dashboard(request):
         "android_count": android_count,
         "tablet_count": tablet_count,
         "phone_count": phone_count,
+        "active_warranty": active_warranty,
+        "expired_warranty": expired_warranty,
         "expiring_warranties": expiring_warranty_count,
-        "expiring_devices": expiring_devices,  # for the warranty box
-        # Pass the combined OS support data to the template
+        "expiring_devices": expiring_devices,
+        "os_expiring_devices": os_expiring_devices,
         "combined_os_devices": combined_os_devices,
         "combined_os_count": combined_os_count,
         "remaining_os_support": remaining_os_support,
+        "recent_devices": recent_devices,
+        "devices": devices,
     }
 
     return render(request, "dashboard.html", context)
-
 
 #delete device view
 @login_required
