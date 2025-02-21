@@ -291,30 +291,22 @@ def generate_unique_id():
 
 @login_required
 def dashboard(request):
-    """
-    Dashboard view to show device statistics, including OS lifespan alerts.
-    """
     devices = Device.objects.filter(app_user=request.user)
 
-    # Count total devices and device users
     total_devices = devices.count()
     total_device_users = devices.values("device_user").distinct().count()
 
-    # Count platform distribution
+    # Platform counts for pie-charts
     ios_count = devices.filter(model__platform="iOS").count()
     android_count = devices.filter(model__platform="Android").count()
 
-    # Count device types
     tablet_count = devices.filter(model__device_type="Tablet").count()
     phone_count = devices.filter(model__device_type="Phone").count()
 
-    # Warranty status calculation
     today = date.today()
-    active_warranty = devices.filter(warranty_end_date__gte=today).count()
-    expired_warranty = devices.filter(warranty_end_date__lt=today).count()
-
-    # Warranties expiring within the next 90 days
     upcoming_expiry_threshold = today + timedelta(days=90)
+
+    # Warranty expiry calculation (unchanged)
     expiring_devices = devices.filter(
         warranty_end_date__isnull=False,
         warranty_end_date__lte=upcoming_expiry_threshold,
@@ -322,21 +314,23 @@ def dashboard(request):
     )
     expiring_warranty_count = expiring_devices.count()
 
-    # OS lifespan status calculation
+    # OS support status: build lists for both expiring and expired OS support
     os_expiring_devices = []
-    os_expiring_count = 0
-    os_expired_count = 0
+    os_expired_devices = []
     for device in devices:
         os_end_date = device.os_support_end()
         if os_end_date:
             if today <= os_end_date.date() <= upcoming_expiry_threshold:
                 os_expiring_devices.append(device)
-                os_expiring_count += 1
             elif os_end_date.date() < today:
-                os_expired_count += 1
+                os_expired_devices.append(device)
 
-    # Calculate remaining devices with active OS support
-    remaining_os_support = total_devices - os_expiring_count - os_expired_count
+    # Combine both OS support lists into one
+    combined_os_devices = os_expiring_devices + os_expired_devices
+    combined_os_count = len(combined_os_devices)
+
+    # Remaining devices with active OS support (for the pie chart)
+    remaining_os_support = total_devices - combined_os_count
 
     context = {
         "total_devices": total_devices,
@@ -345,18 +339,15 @@ def dashboard(request):
         "android_count": android_count,
         "tablet_count": tablet_count,
         "phone_count": phone_count,
-        "active_warranty": active_warranty,
-        "expired_warranty": expired_warranty,
         "expiring_warranties": expiring_warranty_count,
-        "expiring_devices": expiring_devices,
-        "os_expiring_count": os_expiring_count,
-        "os_expired_count": os_expired_count,
-        "os_expiring_devices": os_expiring_devices,
+        "expiring_devices": expiring_devices,  # for the warranty box
+        # Pass the combined OS support data to the template
+        "combined_os_devices": combined_os_devices,
+        "combined_os_count": combined_os_count,
         "remaining_os_support": remaining_os_support,
     }
 
     return render(request, "dashboard.html", context)
-
 
 
 #delete device view

@@ -175,40 +175,24 @@
                 <p style="text-align: center;">✅ No upcoming warranty expirations.</p>
             {% endif %}
         </div>
-        <div class="warranty-box">
-            <h3>⚠️ Expiring OS Support (Next 90 Days)</h3>
-            <h2 style="text-align: center;">{{ os_expiring_count|default:"0" }}</h2>
-            <ul class="expired-list">
-                {% for device in os_expiring_devices %}
-                    <li>
-                        <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
-                        <small>User: {{ device.device_user.full_name }}</small> <br>
-                        <small>Support Ends: {{ device.os_support_end|date:"Y-m-d" }}</small>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if not os_expiring_devices %}
-                <p style="text-align: center;">✅ No upcoming OS support expirations.</p>
-            {% endif %}
-        </div>
-        <div class="warranty-box" style="background-color: red; color: white;">
-            <h3>❌ OS Support Expired</h3>
-            <h2 style="text-align: center;">{{ os_expired_count|default:"0" }}</h2>
-            <ul class="expired-list">
-                {% for device in os_expired_devices %}
-                    <li>
-                        <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
-                        <small>User: {{ device.device_user.full_name }}</small> <br>
-                        <small>Support Ended: {{ device.os_support_end }}</small>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if not os_expired_devices %}
-                <p style="text-align: center;">✅ No devices with expired OS support.</p>
-            {% endif %}
-        </div>
-    </div>
+
+    <div class="warranty-box" style="background-color: orange; color: black;">
+    <h3>⚠️ Expiring Devices (OS Support)</h3>
+    <h2 style="text-align: center;">{{ combined_os_count|default:"0" }}</h2>
+    <ul class="expired-list">
+        {% for device in combined_os_devices %}
+            <li>
+                <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
+                <small>User: {{ device.device_user.full_name }}</small> <br>
+                <small>Support Ends: {{ device.os_support_end|date:"Y-m-d" }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+    {% if not combined_os_devices %}
+        <p style="text-align: center;">✅ No expiring or expired OS support devices.</p>
+    {% endif %}
 </div>
+
 
 
 
