@@ -12,15 +12,14 @@
             padding: 0;
             background-color: #f8f9fc;
         }
-        .container {
-            max-width: 90%;
-            margin: 40px auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+       .container {
+    width: 100%;
+    max-width: 1200px; /* Ensures it doesn't stretch too far */
+    margin: 0 auto; /* Forces centering */
+    text-align: center;
+}
+
+
         h1 {
             color: #333;
             margin-bottom: 20px;
@@ -72,22 +71,35 @@
             background-color: orange;
             color: black;
         }
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            grid-gap: 30px;
-            margin-top: 20px;
-            justify-items: center;
-            padding-bottom: 30px;
-        }
-        .chart-box, .warranty-box {
-            width: 100%;
-            max-width: 450px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        }
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 20px;
+    max-width: 1050px;
+    margin: 0 auto;
+    justify-content: center; /* This forces full centering */
+    align-items: start;
+}
+
+
+
+.chart-box, .warranty-box {
+    width: 100%;
+    max-width: 320px; /* Equal width for all */
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
         .warranty-box {
             background: orange;
             color: black;
@@ -141,52 +153,91 @@
 
         <div class="divider"></div>
 
-        <h2>Device Insights</h2>
-        <div class="charts-container">
-            <div class="chart-box"><canvas id="platformChart"></canvas></div>
-            <div class="chart-box"><canvas id="deviceTypeChart"></canvas></div>
-            <div class="chart-box"><canvas id="warrantyChart"></canvas></div>
-            <div class="warranty-box">
-                <h3>⚠️ Expiring Warranties (Next 90 Days)</h3>
-                <h2 style="text-align: center;">{{ expiring_warranties|default:"0" }}</h2>
-                <ul class="expired-list">
-                    {% for device in expiring_devices %}
-                        <li>
-                            <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
-                            <small>User: {{ device.device_user.full_name }}</small> <br>
-                            <small>Expires: {{ device.warranty_end_date }}</small>
-                        </li>
-                    {% endfor %}
-                </ul>
-                {% if not expiring_devices %}
-                    <p style="text-align: center;">✅ No upcoming warranty expirations.</p>
-                {% endif %}
-            </div>
+      <div class="container">
+    <h2>Device Insights</h2>
+    <div class="charts-container">
+        <div class="chart-box"><canvas id="platformChart"></canvas></div>
+        <div class="chart-box"><canvas id="deviceTypeChart"></canvas></div>
+        <div class="chart-box"><canvas id="osLifespanChart"></canvas></div>
+        <div class="warranty-box">
+            <h3>⚠️ Expiring Warranties (Next 90 Days)</h3>
+            <h2 style="text-align: center;">{{ expiring_warranties|default:"0" }}</h2>
+            <ul class="expired-list">
+                {% for device in expiring_devices %}
+                    <li>
+                        <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
+                        <small>User: {{ device.device_user.full_name }}</small> <br>
+                        <small>Expires: {{ device.warranty_end_date }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if not expiring_devices %}
+                <p style="text-align: center;">✅ No upcoming warranty expirations.</p>
+            {% endif %}
+        </div>
+        <div class="warranty-box">
+            <h3>⚠️ Expiring OS Support (Next 90 Days)</h3>
+            <h2 style="text-align: center;">{{ os_expiring_count|default:"0" }}</h2>
+            <ul class="expired-list">
+                {% for device in os_expiring_devices %}
+                    <li>
+                        <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
+                        <small>User: {{ device.device_user.full_name }}</small> <br>
+                        <small>Support Ends: {{ device.os_support_end|date:"Y-m-d" }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if not os_expiring_devices %}
+                <p style="text-align: center;">✅ No upcoming OS support expirations.</p>
+            {% endif %}
+        </div>
+        <div class="warranty-box" style="background-color: red; color: white;">
+            <h3>❌ OS Support Expired</h3>
+            <h2 style="text-align: center;">{{ os_expired_count|default:"0" }}</h2>
+            <ul class="expired-list">
+                {% for device in os_expired_devices %}
+                    <li>
+                        <strong>{{ device.user_device_id }}</strong> - {{ device.model.name }} <br>
+                        <small>User: {{ device.device_user.full_name }}</small> <br>
+                        <small>Support Ended: {{ device.os_support_end }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if not os_expired_devices %}
+                <p style="text-align: center;">✅ No devices with expired OS support.</p>
+            {% endif %}
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            function createChart(canvasId, labels, data, colors) {
-                var ctx = document.getElementById(canvasId);
-                if (ctx) {
-                    new Chart(ctx.getContext('2d'), {
-                        type: 'pie',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                data: data,
-                                backgroundColor: colors
-                            }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false }
-                    });
-                }
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function createChart(canvasId, labels, data, colors) {
+            var ctx = document.getElementById(canvasId);
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
             }
-            createChart("platformChart", ['iOS', 'Android'], [{{ ios_count|default:0 }}, {{ android_count|default:0 }}], ['#FF6384', '#36A2EB']);
-            createChart("deviceTypeChart", ['Tablet', 'Phone'], [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}], ['#4CAF50', '#FFC107']);
-            createChart("warrantyChart", ['Active', 'Expired'], [{{ active_warranty|default:0 }}, {{ expired_warranty|default:0 }}], ['#2E8B57', '#DC3545']);
-        });
-    </script>
+        }
+        createChart("platformChart", ['iOS', 'Android'], [{{ ios_count|default:0 }}, {{ android_count|default:0 }}], ['#FF6384', '#36A2EB']);
+        createChart("deviceTypeChart", ['Tablet', 'Phone'], [{{ tablet_count|default:0 }}, {{ phone_count|default:0 }}], ['#4CAF50', '#FFC107']);
+createChart("osLifespanChart", ['Active Support', 'Ending Soon', 'Expired'], [{{ remaining_os_support|default:0 }}, {{ os_expiring_count|default:0 }}, {{ os_expired_count|default:0 }}], ['#2E8B57', '#DC3545', '#A9A9A9']);
+
+
+    });
+</script>
 </body>
+
 </html>

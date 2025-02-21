@@ -292,7 +292,7 @@ def generate_unique_id():
 @login_required
 def dashboard(request):
     """
-    Dashboard view to show device statistics, including warranty alerts.
+    Dashboard view to show device statistics, including OS lifespan alerts.
     """
     devices = Device.objects.filter(app_user=request.user)
 
@@ -313,7 +313,7 @@ def dashboard(request):
     active_warranty = devices.filter(warranty_end_date__gte=today).count()
     expired_warranty = devices.filter(warranty_end_date__lt=today).count()
 
-    # Warranties expiring within the next 30 days
+    # Warranties expiring within the next 90 days
     upcoming_expiry_threshold = today + timedelta(days=90)
     expiring_devices = devices.filter(
         warranty_end_date__isnull=False,
@@ -322,9 +322,21 @@ def dashboard(request):
     )
     expiring_warranty_count = expiring_devices.count()
 
-    # Sample data for custom chart (replace with real logic if needed)
-    sample_data1 = 10
-    sample_data2 = 5
+    # OS lifespan status calculation
+    os_expiring_devices = []
+    os_expiring_count = 0
+    os_expired_count = 0
+    for device in devices:
+        os_end_date = device.os_support_end()
+        if os_end_date:
+            if today <= os_end_date.date() <= upcoming_expiry_threshold:
+                os_expiring_devices.append(device)
+                os_expiring_count += 1
+            elif os_end_date.date() < today:
+                os_expired_count += 1
+
+    # Calculate remaining devices with active OS support
+    remaining_os_support = total_devices - os_expiring_count - os_expired_count
 
     context = {
         "total_devices": total_devices,
@@ -335,13 +347,16 @@ def dashboard(request):
         "phone_count": phone_count,
         "active_warranty": active_warranty,
         "expired_warranty": expired_warranty,
-        "expiring_warranties": expiring_warranty_count,  # New counter
-        "expiring_devices": expiring_devices,  # Pass list for table display
-        "sample_data1": sample_data1,
-        "sample_data2": sample_data2,
+        "expiring_warranties": expiring_warranty_count,
+        "expiring_devices": expiring_devices,
+        "os_expiring_count": os_expiring_count,
+        "os_expired_count": os_expired_count,
+        "os_expiring_devices": os_expiring_devices,
+        "remaining_os_support": remaining_os_support,
     }
 
     return render(request, "dashboard.html", context)
+
 
 
 #delete device view
