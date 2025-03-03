@@ -93,25 +93,20 @@ class Device(models.Model):
         Generates a unique device ID based on the user's ID and the next available number.
         This ensures no duplicate IDs are created after deletions.
         """
-
-
-        # Find the highest existing device number for the user
-        last_device = Device.objects.filter(app_user=user).aggregate(Max('user_device_id'))
-
-        # Extract the last number and increment it
-        last_id = last_device['user_device_id__max']
-
-        if last_id:
+        devices = Device.objects.filter(app_user=user)
+        max_num = 0
+        for d in devices:
             try:
-                # Extract the numeric part of the last ID (e.g., "1-5" -> 5)
-                last_number = int(last_id.split('-')[1])
+                # Extract the numeric part of the device ID (e.g., "1-10" -> 10)
+                num = int(d.user_device_id.split('-')[1])
+                if num > max_num:
+                    max_num = num
             except (IndexError, ValueError):
-                last_number = 0  # Fallback if format is incorrect
-        else:
-            last_number = 0  # If no devices exist yet
+                # In case the format is incorrect, ignore this device.
+                continue
 
-        # Generate the new unique ID
-        return f"{user.id}-{last_number + 1}"
+        # Generate the new unique ID by adding 1 to the maximum found
+        return f"{user.id}-{max_num + 1}"
 
     def save(self, *args, **kwargs):
         """
