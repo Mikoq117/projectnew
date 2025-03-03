@@ -331,7 +331,7 @@ def dashboard(request):
     combined_os_count = len(combined_os_devices)
     remaining_os_support = total_devices - combined_os_count
 
-    # Recent devices using ID ordering as a proxy for "recent"
+    # Recent devices using backwards ID ordering  - "recent"
     recent_devices = devices.order_by("-id")[:5]
 
     context = {
@@ -533,7 +533,10 @@ def chatbot_view(request):
             payload = {
                 "model": "openai/gpt-4o-mini",
                 "messages": [
-                    {"role": "system", "content": "You are an assistant that helps recommend new devices for a business. Recommend the top 3 and only recommend Samsung or Apple. Dot have an into to you answer but have a short conclusion.  "},
+                    {"role": "system", "content": """You are an assistant that helps recommend new devices for a business. 
+                    Recommend the top 3 and only recommend Samsung or Apple.
+                     Dont have an into to you answer but have a short conclusion.  """},
+
 
 
                     {"role": "user", "content": user_message}
