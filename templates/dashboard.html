@@ -40,17 +40,24 @@
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
     }
     .sidebar h1 {
       font-size: 34px;
       margin-bottom: 30px;
+      text-align: center;
     }
-    .sidebar nav {
-      width: 100%;
+    .nav-container {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;  /* Spread nav buttons over 60% of viewport height */
     }
     .sidebar nav a,
     .sidebar nav form {
@@ -72,10 +79,55 @@
       transform: translateY(-2px);
     }
     .btn-primary { background-color: #007bff; color: #fff; }
-    .btn-success { background-color: #28a745; color: #fff; }
-    .btn-info    { background-color: #17a2b8; color: #fff; }
-    .btn-warning { background-color: #ffc107; color: #212529; }
-    .btn-danger  { background-color: #dc3545; color: #fff; }
+    .btn-success { background-color: #007BFF; color: #fff; }
+    .btn-info    { background-color: #007bff; color: #fff; }
+    .btn-warning { background-color: #007bff; color: #fff; }
+    .btn-danger  { background-color: #ed0728; color: #fff; }
+    /* Logout container styling */
+    .logout-container {
+      margin-top: auto;
+    }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+.btn-dashboard {
+  position: relative;
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #f5f7fa; /* Same as dashboard background */
+  color: #1d2d50;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 4px;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-dashboard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -25px; /* Adjust this value to extend further if desired */
+  bottom: 0;
+  width: 30px;
+  background-color: #f5f7fa; /* Match dashboard background */
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+
+
 
     /* Main Content */
     .main-content {
@@ -94,6 +146,10 @@
       font-size: 28px;
       color: #1d2d50;
       margin: 0;
+    }
+    .welcome-message {
+      font-size: 20px;
+      color: #1d2d50;
     }
 
     /* Stats Cards */
@@ -144,7 +200,7 @@
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, 425px); /* Adjust row height as needed */
       gap: 20px;
-      height: 820px; /* 2 * 400 + 20 gap = 820 total. Adjust as needed. */
+      height: 820px;
     }
     .card {
       background: #fff;
@@ -166,7 +222,7 @@
       border: 1px solid #000;
     }
     .chart-container {
-      height: 380px; /* Slightly smaller than 400px card height */
+      height: 380px; /* Slightly smaller than card height */
       position: relative;
     }
     .chart-container canvas {
@@ -185,18 +241,20 @@
       margin: 0;
       font-size: 30px;   /* Slightly bigger alert heading */
       text-align: center;
-      color: #d9534f;
+      color: #0c0c0c;
     }
     .alert-card h2 {
       font-size: 30px;
       text-align: center;
       margin: 12px 0;
-      color: #d9534f;
+      color: #e80808;
     }
     .alert-list {
       list-style: none;
       padding: 0;
       margin: 0;
+      flex: 1;
+      overflow-y: auto;
     }
     .alert-list li {
       background: #f8f9fc;
@@ -204,7 +262,7 @@
       border-radius: 4px;
       margin-bottom: 10px;
       font-size: 20px;   /* Larger text in alerts */
-      line-height: 1.4;  /* Improve line spacing in list items */
+      line-height: 1.4;
       transition: background 0.3s;
     }
     .alert-list li:hover {
@@ -223,6 +281,34 @@
     }
     .recent-devices {
       border-left: 4px solid #6c757d;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 20% auto;
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+      border-radius: 8px;
+    }
+    .modal-buttons {
+      margin-top: 20px;
+    }
+    .modal-buttons button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
     }
 
     @media (max-width: 768px) {
@@ -244,16 +330,22 @@
         height: auto;
       }
       .chart-container {
-        height: 300px; /* Adjust for mobile */
+        height: 300px;
       }
     }
   </style>
 </head>
 <body>
   <!-- Sidebar Navigation -->
-  <aside class="sidebar">
-    <h1>Asset Manager</h1>
+ <!-- Sidebar Navigation -->
+<aside class="sidebar">
+  <h1>Asset Manager</h1>
+  <div class="nav-container">
     <nav>
+      <!-- New Dashboard Button -->
+      <a href="#">
+        <button class="btn-dashboard">Dashboard</button>
+      </a>
       <a href="{% url 'device_list' %}">
         <button class="btn-primary">Device List</button>
       </a>
@@ -266,17 +358,24 @@
       <a href="{% url 'help_page' %}">
         <button class="btn-warning">AI Device Help</button>
       </a>
+    </nav>
+    <div class="logout-container">
       <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn-danger">Logout</button>
       </form>
-    </nav>
-  </aside>
+    </div>
+  </div>
+</aside>
+
 
   <!-- Main Content Area -->
   <main class="main-content">
     <div class="main-header">
       <h2>Dashboard</h2>
+      <div class="welcome-message">
+        Welcome, {{ request.user.username }}!
+      </div>
     </div>
 
     <!-- Stats Section -->
@@ -356,7 +455,7 @@
       <!-- Card 6: Recent Devices List -->
       <div class="card alert-card recent-devices">
         <h3>Recent Devices</h3>
-        <h2>&nbsp;</h2> <!-- Extra space for consistent layout -->
+        <h2>&nbsp;</h2>
         <ul class="alert-list">
           {% for device in recent_devices %}
           <li>
@@ -374,9 +473,24 @@
     </div>
   </main>
 
-  <!-- Chart Script -->
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to logout?</h3>
+      <div class="modal-buttons">
+        <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+        <button id="cancelLogout" class="btn-primary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart & Modal Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
+      // Register ChartDataLabels plugin if needed.
+      if (typeof ChartDataLabels !== 'undefined') {
+        Chart.register(ChartDataLabels);
+      }
       function createChart(canvasId, labels, data, colors) {
         var ctx = document.getElementById(canvasId);
         if (ctx) {
@@ -393,14 +507,43 @@
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                  labels: {
+                    font: { size: 16 },
+                    color: '#000',
+                    generateLabels: function(chart) {
+                      const data = chart.data;
+                      if (data.labels.length && data.datasets.length) {
+                        return data.labels.map(function(label, i) {
+                          const meta = chart.getDatasetMeta(0);
+                          const ds = data.datasets[0];
+                          const value = ds.data[i];
+                          const style = meta.controller.getStyle(i);
+                          return {
+                            text: label + " (" + value + ")",
+                            fillStyle: style.backgroundColor,
+                            strokeStyle: style.borderColor,
+                            lineWidth: style.borderWidth,
+                            hidden: isNaN(ds.data[i]) || meta.data[i].hidden,
+                            index: i
+                          };
+                        });
+                      }
+                      return [];
+                    }
+                  }
+                },
                 datalabels: {
                   color: '#000',
-                  font: { weight: 'bold', size: 26 }, /* Slightly bigger chart labels */
-                  formatter: (value) => value
+                  font: { weight: 'bold', size: 26 },
+                  formatter: (value) => value,
+                  anchor: 'center',
+                  align: 'center'
                 }
               }
-            },
-            plugins: [ChartDataLabels]
+            }
           });
         }
       }
@@ -427,8 +570,27 @@
         [activeWarranty, expiredWarranty],
         ['#28a745', '#dc3545']
       );
+
+      // Logout Modal functionality
+      var logoutForm = document.querySelector(".logout-container form");
+      var logoutModal = document.getElementById("logoutModal");
+      var confirmLogout = document.getElementById("confirmLogout");
+      var cancelLogout = document.getElementById("cancelLogout");
+
+      logoutForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        logoutModal.style.display = "block";
+      });
+
+      confirmLogout.addEventListener("click", function() {
+        logoutModal.style.display = "none";
+        logoutForm.submit();
+      });
+
+      cancelLogout.addEventListener("click", function() {
+        logoutModal.style.display = "none";
+      });
     });
   </script>
 </body>
 </html>
-

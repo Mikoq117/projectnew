@@ -1,147 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device-User List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .button-group {
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 30px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .form-section {
-            margin-bottom: 30px;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .device-user-list {
-            margin-top: 20px;
-        }
-        .device-user-item {
-            background: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Device-User List</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  <style>
+    /* Global */
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px; /* ADJUST HERE to change sidebar width */
+      background-color: #1d2d50;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h1 {
+      font-size: 34px; /* ADJUST HERE for the "Asset Manager" heading in sidebar */
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;
+    }
+    .sidebar nav a,
+    .sidebar nav form {
+      width: 100%;
+    }
+    .sidebar nav a button,
+    .sidebar nav form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px; /* ADJUST HERE for sidebar button sizing */
+      border-radius: 4px;
+      font-size: 20px; /* ADJUST HERE for sidebar button text size */
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sidebar nav a button:hover,
+    .sidebar nav form button:hover {
+      transform: translateY(-2px);
+    }
+    /* Sidebar Buttons */
+    .btn-dashboard {
+      background-color: #1d2d50;
+      color: #fff;
+    }
+    /* Mark the current page's button as active */
+    .btn-active {
+      position: relative;
+      width: 70%; /* ADJUST HERE for the "extended" button's width in the sidebar */
+      margin: 0 auto;
+      text-align: center;
+      background-color: #f5f7fa;
+      color: #1d2d50;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .btn-active::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -25px; /* ADJUST HERE if you want more or less extension */
+      bottom: 0;
+      width: 30px;  /* ADJUST HERE if you want a wider extension */
+      background-color: #f5f7fa;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-success { background-color: #28a745; color: #fff; }
+    .btn-info    { background-color: #17a2b8; color: #fff; }
+    .btn-warning { background-color: #ffc107; color: #212529; }
+    .btn-danger  { background-color: #dc3545; color: #fff; }
+    .logout-container {
+      margin-top: auto;
+    }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px; /* ADJUST HERE for logout button sizing */
+      border-radius: 4px;
+      font-size: 20px;    /* ADJUST HERE for logout button text size */
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 30px 40px; /* ADJUST HERE for main content spacing */
+      height: 100vh;
+      overflow: hidden; /* Keeps the entire page from scrolling */
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px; /* ADJUST HERE for spacing under the main header */
+    }
+    .main-header h2 {
+      font-size: 28px; /* ADJUST HERE for "Device-User Management" heading size */
+      color: #1d2d50;
+      margin: 0;
+    }
+    .welcome-message {
+      font-size: 20px; /* ADJUST HERE for the welcome message text size */
+      color: #1d2d50;
+    }
+
+    /* Content Container */
+    .content-container {
+      max-width: 1900px; /* ADJUST HERE to make entire content container wider or narrower */
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;    /* ADJUST HERE for inner padding of the white content box */
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 140px); /* ADJUST HERE to change vertical fill of content container */
+    }
+
+    /* Dual Container for Form and List */
+    .dual-container {
+      display: flex;
+      gap: 60px; /* ADJUST HERE for spacing between the form box & user-list box */
+      margin-top: 20px;
+      flex: 1;
+    }
+
+    /* Left Column: Add-user form container */
+    .form-container {
+      flex: 0.9; /* ADJUST HERE for how much horizontal space the form takes vs the list */
+      margin-right: 50px; /* ADJUST HERE for how far to push the form container to the left */
+    }
+    .form-section {
+      background: #f9f9f9;
+      padding: 20px;   /* ADJUST HERE for inner padding of the form box */
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      height: 65%;    /* Fill available height */
+    }
+    .form-group {
+      margin-bottom: 15px; /* ADJUST HERE for spacing between form fields */
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 20px; /* ADJUST HERE for label text size */
+      color: #1d2d50;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;   /* ADJUST HERE for text field padding */
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 18px; /* ADJUST HERE for text field font size */
+    }
+    .form-section button {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 24px; /* ADJUST HERE for "Add Device-User" button text size */
+      padding: 16px 24px; /* ADJUST HERE for "Add Device-User" button padding */
+    }
+
+    /* Right Column: user-list container */
+    .list-container {
+      flex: 2; /* ADJUST HERE for how much horizontal space the user list takes */
+      height: 900px; /* ADJUST HERE for the vertical height of the scrollable box */
+      overflow-y: auto; /* keeps user list scrolling independently */
+      padding-right: 30px; /* ADJUST HERE for extra space on the right side of user list box */
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .device-user-list {
+      margin-top: 20px;
+    }
+    .device-user-list h2 {
+      margin-top: 0;
+      font-size: 24px; /* ADJUST HERE for "Existing Device-Users" heading */
+      color: #1d2d50;
+    }
+    .device-user-item {
+      background: #f9f9f9;
+      padding: 15px;    /* ADJUST HERE for each user's box padding */
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px; /* ADJUST HERE for spacing between user boxes */
+      font-size: 20px;     /* ADJUST HERE for user info text size */
+      line-height: 1.4;
+    }
+    .device-user-item p {
+      margin: 5px 0; /* ADJUST HERE for spacing between user info lines */
+    }
+    .button-group {
+      display: flex;
+      justify-content: flex-start;
+      gap: 10px; /* ADJUST HERE for spacing between Edit & Delete buttons */
+      margin-top: 10px;
+    }
+    .button-group button {
+      padding: 12px 18px; /* ADJUST HERE for Edit & Delete button size */
+      font-size: 20px;    /* ADJUST HERE for Edit & Delete button text size */
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-danger  { background-color: #e80808; color: #fff; }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px;
+      }
+      .sidebar h1 {
+        font-size: 20px;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .content-container {
+        margin: 20px auto;
+        height: auto;
+      }
+      .dual-container {
+        flex-direction: column;
+      }
+      .list-container {
+        height: 600px; /* ADJUST HERE for mobile height of user list box */
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Device-User Management</h1>
-
-        <!-- Dashboard Button -->
-        <div class="button-group">
-            <a href="{% url 'dashboard' %}">
-                <button class="btn-primary">Dashboard</button>
-            </a>
-        </div>
-
-        <!-- Form to Add Device-User -->
-        <div class="form-section">
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_full_name">Full Name</label>
-                    {{ form.full_name }}
-                </div>
-                <div class="form-group">
-                    <label for="id_position">Position</label>
-                    {{ form.position }}
-                </div>
-                <div class="form-group">
-                    <label for="id_location">Location</label>
-                    {{ form.location }}
-                </div>
-                <div class="form-group">
-                    <label for="id_phone_number">Phone Number</label>
-                    {{ form.phone_number }}
-                </div>
-                <div class="form-group">
-                    <label for="id_email">Email</label>
-                    {{ form.email }}
-                </div>
-                <button class="btn-primary" type="submit">Add Device-User</button>
-            </form>
-        </div>
-
-        <!-- List of Created Device-Users -->
-        <div class="device-user-list">
-            <h2>Existing Device-Users</h2>
-            {% if device_users %}
-                {% for user in device_users %}
-                    <div class="device-user-item">
-                        <p><strong>Full Name:</strong> {{ user.full_name }}</p>
-                        <p><strong>Position:</strong> {{ user.position|default:"N/A" }}</p>
-                        <p><strong>Unique ID:</strong> {{ user.device_user_id  }}</p>
-                        <p><strong>Location:</strong> {{ user.location }}</p>
-                        <p><strong>Phone Number:</strong> {{ user.phone_number|default:"N/A" }}</p>
-                        <p><strong>Email:</strong> {{ user.email|default:"N/A" }}</p>
-                    </div>
-                      <td>
-                    <a href="{% url 'edit_device_user' user.id %}">
-                        <button class="btn-primary">Edit</button>
-                    </a>
-                    <form action="{% url 'delete_device_user' user.id %}" method="POST" style="display:inline;">
-                        {% csrf_token %}
-                        <button class="btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this user?');">
-                            Delete
-                        </button>
-                    </form>
-                </td>
-                {% endfor %}
-            {% else %}
-                <p>No device-users found.</p>
-            {% endif %}
-        </div>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <h1>Asset Manager</h1>
+    <div class="nav-container">
+      <nav>
+        <a href="{% url 'dashboard' %}">
+          <button class="btn-dashboard">Dashboard</button>
+        </a>
+        <a href="{% url 'device_list' %}">
+          <button class="btn-primary">Device List</button>
+        </a>
+        <a href="{% url 'device_user_list' %}">
+          <button class="btn-success btn-active">Device User List</button>
+        </a>
+        <a href="{% url 'reports' %}">
+          <button class="btn-info">Reports</button>
+        </a>
+        <a href="{% url 'help_page' %}">
+          <button class="btn-warning">AI Device Help</button>
+        </a>
+      </nav>
+      <div class="logout-container">
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn-danger">Logout</button>
+        </form>
+      </div>
     </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <div class="main-header">
+      <h2>Device-User Management</h2>
+      <div class="welcome-message">
+        Welcome, {{ request.user.username }}!
+      </div>
+    </div>
+    <div class="content-container">
+      <h1 class="page-title">Device-User Management</h1>
+      <div class="dual-container">
+        <!-- Left Column: Add Device-User Form -->
+        <div class="form-container">
+          <div class="form-section">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="id_full_name">Full Name</label>
+                {{ form.full_name }}
+              </div>
+              <div class="form-group">
+                <label for="id_position">Position</label>
+                {{ form.position }}
+              </div>
+              <div class="form-group">
+                <label for="id_location">Location</label>
+                {{ form.location }}
+              </div>
+              <div class="form-group">
+                <label for="id_phone_number">Phone Number</label>
+                {{ form.phone_number }}
+              </div>
+              <div class="form-group">
+                <label for="id_email">Email</label>
+                {{ form.email }}
+              </div>
+              <button type="submit">Add Device-User</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Column: Existing Device-Users List -->
+        <div class="list-container">
+          <h2>Existing Device-Users</h2>
+          {% if device_users %}
+            {% for user in device_users %}
+              <div class="device-user-item">
+                <p><strong>Full Name:</strong> {{ user.full_name }}</p>
+                <p><strong>Position:</strong> {{ user.position|default:"N/A" }}</p>
+                <p><strong>Unique ID:</strong> {{ user.device_user_id }}</p>
+                <p><strong>Location:</strong> {{ user.location }}</p>
+                <p><strong>Phone Number:</strong> {{ user.phone_number|default:"N/A" }}</p>
+                <p><strong>Email:</strong> {{ user.email|default:"N/A" }}</p>
+                <div class="button-group">
+                  <a href="{% url 'edit_device_user' user.id %}">
+                    <button class="btn-primary">Edit</button>
+                  </a>
+                  <form action="{% url 'delete_device_user' user.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>No device-users found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
