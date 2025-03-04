@@ -51,17 +51,26 @@ import json
 from django.db.models import Q
 @login_required
 def device_user_list(request):
+    search_query = request.GET.get('search', '')
+
     # Fetch device users for the logged-in user
     device_users = DeviceUser.objects.filter(app_user=request.user)
+
+    # Filter users by name, position, or email if there's a search query
+    if search_query:
+        device_users = device_users.filter(
+            Q(full_name__icontains=search_query) |
+            Q(position__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
 
     if request.method == 'POST':
         form = DeviceUserForm(request.POST)
         if form.is_valid():
-            # Assign the logged-in user to the new device user
             device_user = form.save(commit=False)
             device_user.app_user = request.user
             device_user.save()
-            return redirect('device_user_list')  # Redirect back to the list
+            return redirect('device_user_list')
 
     else:
         form = DeviceUserForm()
