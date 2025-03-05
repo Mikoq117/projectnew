@@ -7,28 +7,24 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
   <style>
     /* Global */
-    * {
-      box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f5f7fa;
       color: #333;
-      display: flex;
       font-size: 16px;
       line-height: 1.5;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
+    a { text-decoration: none; color: inherit; }
+
+    /* Page Wrapper: Sidebar + Main Content */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
     }
 
-    /* Sidebar */
+    /* Sidebar Navigation */
     .sidebar {
       width: 250px;
       background-color: #1d2d50;
@@ -39,27 +35,12 @@
       flex-direction: column;
       justify-content: space-between;
     }
-    .sidebar h1 {
-      font-size: 34px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    .nav-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      justify-content: space-between;
-    }
+    .sidebar h1 { font-size: 34px; margin-bottom: 30px; text-align: center; }
+    .nav-container { display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
     .sidebar nav {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      min-height: 60vh;
+      display: flex; flex-direction: column; justify-content: space-around; min-height: 60vh;
     }
-    .sidebar nav a,
-    .sidebar nav form {
-      width: 100%;
-    }
+    .sidebar nav a, .sidebar nav form { width: 100%; }
     .sidebar nav a button,
     .sidebar nav form button {
       width: 100%;
@@ -72,10 +53,7 @@
       transition: background-color 0.3s, transform 0.3s;
     }
     .sidebar nav a button:hover,
-    .sidebar nav form button:hover {
-      transform: translateY(-2px);
-    }
-    /* Dashboard and Active Buttons */
+    .sidebar nav form button:hover { transform: translateY(-2px); }
     .btn-dashboard {
       background-color: #007bff;
       color: #fff;
@@ -86,9 +64,6 @@
       padding: 12px 18px;
       border-radius: 4px;
       font-size: 20px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.3s, transform 0.3s;
     }
     .btn-active {
       position: relative;
@@ -101,9 +76,6 @@
       padding: 12px 18px;
       border-radius: 4px;
       font-size: 20px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.3s, transform 0.3s;
     }
     .btn-active::after {
       content: "";
@@ -117,12 +89,10 @@
       border-bottom-right-radius: 4px;
     }
     .btn-success { background-color: #007bff; color: #fff; }
-    .btn-info    { background-color: #007bff; color: #fff; }
+    .btn-info { background-color: #007bff; color: #fff; }
     .btn-warning { background-color: #007bff; color: #fff; }
-    .btn-danger  { background-color: #e80808; color: #fff; }
-    .logout-container {
-      margin-top: auto;
-    }
+    .btn-danger { background-color: #e80808; color: #fff; }
+    .logout-container { margin-top: auto; }
     .logout-container form button {
       width: 100%;
       border: none;
@@ -134,38 +104,10 @@
       transition: background-color 0.3s, transform 0.3s;
     }
 
-    /* Search Bar (extracted into its own container) */
-    .search-container {
-      display: flex;
-      flex-direction: column;
-    }
-    .search-container input {
-      padding: 10px;
-      font-size: 18px;
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    .search-container button {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .search-container button:hover {
-      background-color: #0056b3;
-    }
-
-    /* Main Content */
+    /* Main Content Area */
     .main-content {
       flex: 1;
       padding: 30px 40px;
-      height: 100vh;
       overflow-y: auto;
     }
     .main-header {
@@ -174,56 +116,140 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .main-header h2 {
-      font-size: 28px;
-      color: #1d2d50;
-      margin: 0;
-    }
-    .welcome-message {
-      font-size: 20px;
-      color: #1d2d50;
-    }
+    .main-header h2 { font-size: 28px; color: #1d2d50; margin: 0; }
+    .welcome-message { font-size: 20px; color: #1d2d50; }
 
     /* Content Container */
     .content-container {
-      max-width: 900px;
+      max-width: 2000px;
       margin: 0 auto;
       background: #fff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      min-height: calc(100vh - 100px);
     }
-    h1.page-title {
+
+    /* List Wrapper: Left Controls + Device List */
+    .list-wrapper {
+      display: flex;
+      gap: 20px;
+    }
+    /* Left Controls Column */
+    .left-controls {
+      width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    /* Common Control Box Style */
+    .control-box {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #f9f9f9;
+      padding: 15px;
+    }
+    /* Search Box (Top) */
+    .search-box { /* Inherits .control-box styling */ }
+    .search-heading {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1d2d50;
+      margin-bottom: 10px;
+    }
+    .search-box input {
+      padding: 10px;
+      font-size: 18px;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .search-box button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .search-box button:hover { background-color: #0056b3; }
+    .filter-heading {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1d2d50;
+      margin-bottom: 10px;
+    }
+    .filter-box select {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    /* Bottom Controls Column */
+    .bottom-controls {
+      margin-top: 70px;
+      display: flex;
+      flex-direction: column;
+      gap: 95px;
+    }
+    .device-counter-box {
+      text-align: center;
+      font-size: 40px;
+      color: #1d2d50;
+    }
+    .device-counter-box .counter-number {
+      color: blue;
+      font-weight: bold;
+    }
+    .device-type-counter-box {
+      text-align: center;
+      font-size: 24px;
+      color: #1d2d50;
+    }
+    .device-type-counter-box .counter-number {
+      color: blue;
+      font-weight: bold;
+    }
+    .add-device-box {
+      text-align: center;
+    }
+    .add-device-box button {
+      background-color: #6c757d;
+      color: #fff;
+      border: none;
+      padding: 20px 40px;
+      font-size: 26px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .add-device-box button:hover { background-color: #5a6268; }
+
+    /* Right Box: Device List */
+    .device-list-box {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #f9f9f9;
+      padding: 10px;
+      height: 900px;
+      overflow-y: auto;
+    }
+    .page-title {
       text-align: center;
       color: #1d2d50;
       font-size: 28px;
       margin-bottom: 20px;
     }
-
-    /* List Wrapper: container for search sidebar and device list */
-    .list-wrapper {
-      display: flex;
-      gap: 20px;
-    }
-    .search-sidebar {
-      width: 300px;
-    }
-    .device-list-container {
-      flex: 1;
-      height: 600px; /* fixed height for scrollable box */
-      overflow-y: auto;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #f9f9f9;
-    }
-
-    /* Device List Styles */
-    .device-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
+    .device-list { margin: 0; padding: 0; list-style: none; }
     .device-item {
       display: flex;
       justify-content: space-between;
@@ -233,163 +259,176 @@
       background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 6px;
-      font-size: 20px;
+      font-size: 25px;
       line-height: 1.4;
     }
-    .device-item strong {
-      font-weight: bold;
-      color: #333;
-    }
+    .device-item strong { font-weight: bold; color: #333; }
     .device-actions {
       display: flex;
       gap: 10px;
+      /* Removed full-width stretching */
     }
-    /* View Details button with increased size */
+    /* Updated View Details Button: Increased horizontal padding */
     .btn-view {
       background-color: #007bff;
       color: #fff;
       border: none;
-      padding: 15px 30px;
+      padding: 15px 50px; /* increased horizontal padding */
       font-size: 22px;
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s;
-    }
-    .btn-view:hover {
-      background-color: #0056b3;
-    }
-    /* Add New Device Button */
-    .add-device {
       text-align: center;
-      margin-top: 30px;
     }
-    .btn-secondary {
-      background-color: #6c757d;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
+    .btn-view:hover { background-color: #0056b3; }
 
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 15px;
-      }
-      .sidebar h1 {
-        font-size: 20px;
-      }
-      .main-content {
-        padding: 20px;
-      }
-      .content-container {
-        margin: 20px auto;
-      }
-      .list-wrapper {
-        flex-direction: column;
-      }
-      .search-sidebar {
-        width: 100%;
-      }
-      .device-list-container {
-        height: auto;
-      }
+      .page-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; flex-direction: row; justify-content: space-around; padding: 15px; }
+      .sidebar h1 { font-size: 20px; }
+      .main-content { padding: 20px; }
+      .content-container { margin: 20px auto; }
+      .list-wrapper { flex-direction: column; }
+      .left-controls { width: 100%; height: auto; }
+      .device-list-box { height: auto; }
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <aside class="sidebar">
-    <h1>Asset Manager</h1>
-    <div class="nav-container">
-      <nav>
-        <a href="{% url 'dashboard' %}">
-          <button class="btn-dashboard">Dashboard</button>
-        </a>
-        <a href="{% url 'device_list' %}">
-          <button class="btn-active">Device List</button>
-        </a>
-        <a href="{% url 'device_user_list' %}">
-          <button class="btn-success">Device User List</button>
-        </a>
-        <a href="{% url 'reports' %}">
-          <button class="btn-info">Reports</button>
-        </a>
-        <a href="{% url 'help_page' %}">
-          <button class="btn-warning">AI Device Help</button>
-        </a>
-      </nav>
-      <div class="logout-container">
-        <form action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn-danger">Logout</button>
-        </form>
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h1>Asset Manager</h1>
+      <div class="nav-container">
+        <nav>
+          <a href="{% url 'dashboard' %}"><button class="btn-dashboard">Dashboard</button></a>
+          <a href="{% url 'device_list' %}"><button class="btn-active">Device List</button></a>
+          <a href="{% url 'device_user_list' %}"><button class="btn-success">Device User List</button></a>
+          <a href="{% url 'reports' %}"><button class="btn-info">Reports</button></a>
+          <a href="{% url 'help_page' %}"><button class="btn-warning">AI Device Help</button></a>
+        </nav>
+        <div class="logout-container">
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Logout</button>
+          </form>
+        </div>
       </div>
-    </div>
-  </aside>
+    </aside>
 
-  <!-- Main Content Area -->
-  <main class="main-content">
-    <div class="main-header">
-      <h2>Device List</h2>
-      <div class="welcome-message">
-        Welcome, {{ request.user.username }}!
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="main-header">
+        <h2>Device List</h2>
+        <div class="welcome-message">Welcome, {{ request.user.username }}!</div>
       </div>
-    </div>
-    <div class="content-container">
-      <h1 class="page-title">Your Devices</h1>
-      <div class="list-wrapper">
-        <!-- Search sidebar placed to the left -->
-        <div class="search-sidebar">
-          <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search devices...">
-            <button onclick="searchDevices()">Search</button>
+      <div class="content-container">
+        <div class="list-wrapper">
+          <!-- Left Column: Controls -->
+          <div class="left-controls">
+            <!-- Top: Search & Filter Box -->
+            <div class="control-box search-box">
+              <div class="search-heading">Search devices</div>
+              <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search devices..." onkeydown="if(event.key === 'Enter'){updateDeviceDisplay();}">
+                <button onclick="updateDeviceDisplay()">Search</button>
+              </div>
+              <div class="filter-heading">Filter list by device type</div>
+              <div class="filter-box">
+                <select id="filterSelect" onchange="updateDeviceDisplay()">
+                  <option value="all">All Devices</option>
+                  <option value="iphone">iPhone</option>
+                  <option value="samsung">Samsung Phone</option>
+                  <option value="ipad">iPad</option>
+                  <option value="samsung-tab">Samsung Tablet</option>
+                  <option value="all-phones">All Phones</option>
+                  <option value="all-tablets">All Tablets</option>
+                </select>
+              </div>
+            </div>
+            <!-- Bottom: Counters and Add Device Boxes -->
+            <div class="bottom-controls">
+              <div class="control-box device-counter-box">
+                Total devices: <span class="counter-number">{{ devices|length }}</span>
+              </div>
+              <div class="control-box device-type-counter-box">
+                iPhones: <span class="counter-number">{{ iphone_count }}</span><br>
+                Androids: <span class="counter-number">{{ android_count }}</span><br>
+                Samsung Tablets: <span class="counter-number">{{ samsung_tab_count }}</span><br>
+                iPads: <span class="counter-number">{{ ipad_count }}</span>
+              </div>
+              <div class="control-box add-device-box">
+                <a href="{% url 'add_device' %}">
+                  <button class="btn-secondary">Add a New Device</button>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Device List -->
+          <div class="device-list-box">
+            <h1 class="page-title" style="text-align: center;">Your Devices</h1>
+            <ul class="device-list">
+              {% for device in devices %}
+                <li class="device-item" data-platform="{{ device.model.platform }}" data-device-type="{{ device.model.device_type }}">
+             {% load static %}
+<div>
+  <strong>ID:</strong> {{ device.user_device_id }}<br>
+  <strong>Model:</strong> {{ device.model.name }}<br>
+  <strong>Owner:</strong> {{ device.device_user }}<br>
+  {% if device.model.platform == "iOS" and device.model.device_type == "Phone" %}
+    <img src="{% static 'images/iphone.png' %}" alt="iPhone" style="max-width: 100px; margin-top: 10px;">
+  {% elif device.model.platform == "iOS" and device.model.device_type == "Tablet" %}
+    <img src="{% static 'images/ipad.png' %}" alt="iPad" style="max-width: 100px; margin-top: 10px;">
+  {% elif device.model.platform == "Android" and device.model.device_type == "Tablet" %}
+    <img src="{% static 'images/android_tablet.png' %}" alt="Android Tablet" style="max-width: 100px; margin-top: 10px;">
+  {% endif %}
+</div>
+
+                  <div class="device-actions">
+                    <a href="{% url 'device_details' device.user_device_id %}">
+                      <button class="btn-view">View Details</button>
+                    </a>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
-        <!-- Device list scrollable container -->
-        <div class="device-list-container">
-          <ul class="device-list">
-            {% for device in devices %}
-              <li class="device-item">
-                <div>
-                  <strong>ID:</strong> {{ device.user_device_id }}<br>
-                  <strong>Model:</strong> {{ device.model.name }}<br>
-                  <strong>Owner:</strong> {{ device.device_user }}
-                </div>
-                <div class="device-actions">
-                  <a href="{% url 'device_details' device.user_device_id %}">
-                    <button class="btn-view">View Details</button>
-                  </a>
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
       </div>
-      <div class="add-device">
-        <a href="{% url 'add_device' %}">
-          <button class="btn-secondary">Add a New Device</button>
-        </a>
-      </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script>
-    // Simple search function for filtering device list
-    function searchDevices() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
+    function updateDeviceDisplay() {
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const filterValue = document.getElementById('filterSelect').value;
       const items = document.querySelectorAll('.device-item');
+
       items.forEach(item => {
         const text = item.textContent.toLowerCase();
-        item.style.display = text.indexOf(input) > -1 ? '' : 'none';
+        const textMatch = text.indexOf(searchInput) > -1;
+        const platform = item.getAttribute('data-platform');
+        const deviceType = item.getAttribute('data-device-type');
+        let filterMatch = false;
+
+        if (filterValue === "all") {
+          filterMatch = true;
+        } else if (filterValue === "iphone") {
+          filterMatch = (platform === "iOS" && deviceType === "Phone");
+        } else if (filterValue === "samsung") {
+          filterMatch = (platform === "Android" && deviceType === "Phone");
+        } else if (filterValue === "ipad") {
+          filterMatch = (platform === "iOS" && deviceType === "Tablet");
+        } else if (filterValue === "samsung-tab") {
+          filterMatch = (platform === "Android" && deviceType === "Tablet");
+        } else if (filterValue === "all-phones") {
+          filterMatch = (deviceType === "Phone");
+        } else if (filterValue === "all-tablets") {
+          filterMatch = (deviceType === "Tablet");
+        }
+
+        item.style.display = (textMatch && filterMatch) ? "" : "none";
       });
     }
   </script>

@@ -281,15 +281,21 @@ def register(request):
 # Device list view (user-specific)!!!!!
 @login_required
 def device_list(request):
-    # Filter devices by the logged-in user
-    devices = Device.objects.filter(app_user=request.user).select_related('model')
-    return render(request, 'device_list.html', {'devices': devices})
+    # Filter devices by the logged-in user and order descending by id
+    devices = Device.objects.filter(app_user=request.user).select_related('model').order_by('-id')
 
+    iphone_count = devices.filter(model__platform='iOS', model__device_type='Phone').count()
+    android_count = devices.filter(model__platform='Android', model__device_type='Phone').count()
+    ipad_count = devices.filter(model__platform='iOS', model__device_type='Tablet').count()
+    samsung_tab_count = devices.filter(model__platform='Android', model__device_type='Tablet').count()
 
-# Add device view
-
-
-
+    return render(request, 'device_list.html', {
+        'devices': devices,
+        'iphone_count': iphone_count,
+        'android_count': android_count,
+        'ipad_count': ipad_count,
+        'samsung_tab_count': samsung_tab_count,
+    })
 
 
 def generate_unique_id():
