@@ -127,7 +127,7 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      min-height: calc(100vh - 100px);
+      min-height: calc(100vh - 190px);
     }
 
     /* List Wrapper: Left Controls + Device List */
@@ -145,7 +145,7 @@
     }
     /* Common Control Box Style */
     .control-box {
-      border: 1px solid #ddd;
+      border: 2px solid #0c0c0c;
       border-radius: 6px;
       background: #f9f9f9;
       padding: 15px;
@@ -221,9 +221,9 @@
       text-align: center;
     }
     .add-device-box button {
-      background-color: #6c757d;
-      color: #fff;
-      border: none;
+      background-color: #1ecf48;
+      color: #070707;
+        border: 2px solid #353434;
       padding: 20px 40px;
       font-size: 26px;
       border-radius: 4px;
@@ -236,7 +236,7 @@
     /* Right Box: Device List */
     .device-list-box {
       flex: 1;
-      border: 1px solid #ddd;
+      border: 2px solid #353434;
       border-radius: 6px;
       background: #f9f9f9;
       padding: 10px;
@@ -257,7 +257,7 @@
       padding: 15px;
       margin-bottom: 10px;
       background: #f9f9f9;
-      border: 1px solid #ddd;
+      border: 2px solid #353434;
       border-radius: 6px;
       font-size: 25px;
       line-height: 1.4;
@@ -281,6 +281,38 @@
       text-align: center;
     }
     .btn-view:hover { background-color: #0056b3; }
+
+
+
+
+  .device-item {
+  display: grid;
+  grid-template-columns: 300px 120px auto;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+
+  margin-bottom: 10px;
+  background: #efeded;
+  border: 3px solid #070707;
+  border-radius: 6px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.device-image {
+  justify-self: center;
+  margin-top: 5px; /* Increase or decrease this value until the image is centered as desired */
+
+
+}
+
+.device-info {
+  /* Fixed width, so text will wrap if it gets too long */
+  width: 300px;
+}
+
+
 
     @media (max-width: 768px) {
       .page-wrapper { flex-direction: column; }
@@ -320,7 +352,7 @@
     <main class="main-content">
       <div class="main-header">
         <h2>Device List</h2>
-        <div class="welcome-message">Welcome, {{ request.user.username }}!</div>
+        <div class="welcome-message">Logged in as: {{ request.user.username }}</div>
       </div>
       <div class="content-container">
         <div class="list-wrapper">
@@ -359,7 +391,7 @@
               </div>
               <div class="control-box add-device-box">
                 <a href="{% url 'add_device' %}">
-                  <button class="btn-secondary">Add a New Device</button>
+                  <button class="btn-secondary">+ Add a New Device</button>
                 </a>
               </div>
             </div>
@@ -372,18 +404,22 @@
               {% for device in devices %}
                 <li class="device-item" data-platform="{{ device.model.platform }}" data-device-type="{{ device.model.device_type }}">
              {% load static %}
-<div>
-  <strong>ID:</strong> {{ device.user_device_id }}<br>
-  <strong>Model:</strong> {{ device.model.name }}<br>
-  <strong>Owner:</strong> {{ device.device_user }}<br>
-  {% if device.model.platform == "iOS" and device.model.device_type == "Phone" %}
-    <img src="{% static 'images/iphone.png' %}" alt="iPhone" style="max-width: 100px; margin-top: 10px;">
-  {% elif device.model.platform == "iOS" and device.model.device_type == "Tablet" %}
-    <img src="{% static 'images/ipad.png' %}" alt="iPad" style="max-width: 100px; margin-top: 10px;">
-  {% elif device.model.platform == "Android" and device.model.device_type == "Tablet" %}
-    <img src="{% static 'images/android_tablet.png' %}" alt="Android Tablet" style="max-width: 100px; margin-top: 10px;">
-  {% endif %}
-</div>
+<div class="device-info">
+        <strong>ID:</strong> {{ device.user_device_id }}<br>
+        <strong>Model:</strong> {{ device.model.name }}<br>
+        <strong>Owner:</strong> {{ device.device_user }}
+      </div>
+     <div class="device-image">
+        {% if device.model.platform == "iOS" and device.model.device_type == "Phone" %}
+          <img src="{% static 'images/iphone.jpg' %}" alt="iPhone" class="device-img" style="max-width: 100px; border: 1px solid black;">
+        {% elif device.model.platform == "iOS" and device.model.device_type == "Tablet" %}
+          <img src="{% static 'images/ipad.png' %}" alt="iPad" class="device-img" style="max-width: 100px; border: 1px solid black;">
+        {% elif device.model.platform == "Android" and device.model.device_type == "Tablet" %}
+          <img src="{% static 'images/android_tablet.png' %}" alt="Android Tablet" class="device-img" style="max-width: 100px; border: 1px solid black;">
+        {% elif device.model.platform == "Android" and device.model.device_type == "Phone" %}
+          <img src="{% static 'images/androidphone.png' %}" alt="Android Phone" class="device-img" style="max-width: 100px; border: 1px solid black;">
+        {% endif %}
+      </div>
 
                   <div class="device-actions">
                     <a href="{% url 'device_details' device.user_device_id %}">
