@@ -27,7 +27,7 @@
 
     /* Sidebar Navigation */
     .sidebar {
-      position: relative;  /* Added so absolute positioning inside works */
+      position: relative;
       width: 250px;
       background-color: #1d2d50;
       color: #fff;
@@ -75,7 +75,6 @@
       border-radius: 4px;
       font-size: 20px;
     }
-    /* Device List button styling (active) – note: no pseudo-element here */
     .btn-active {
       position: relative;
       width: 70%;
@@ -88,60 +87,53 @@
       border-radius: 4px;
       font-size: 20px;
     }
-    /* Fake Add Device Button – appears below Device List button */
-.fake-add-device {
-  position: absolute;
-  top: 445px;  /* Adjust vertical position as needed */
-  left: 62%;   /* Push it slightly to the right */
-  transform: translateX(-50%);
-  width: 80%;
-  background-color: #fff;
-  border: 2px solid #ffffff;
-  padding: 8px 18px;  /* Reduced vertical padding to make the box shorter */
-  border-radius: 4px;
-  font-size: 20px;
-  color: #1d2d50;
-  z-index: 10;
-}
-
-.fake-second-box {
-  position: absolute;
-  top: 415px; /* Adjust this value to fine-tune its vertical position */
-  left: 50%;   /* Use the same horizontal positioning as the fake-add-device */
-  transform: translateX(-50%);
-  width: 10%;
-  background-color: #fff;
-  border: 2px solid #ffffff;
-  padding: 20px 18px;  /* You can adjust the padding to change the height */
-  border-radius: 4px;
-  font-size: 20px;
-  color: #1d2d50;
-  z-index: 10;
-}
-.owner-field {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.owner-field select {
-  width: 80%; /* Reduces the width of the dropdown */
-}
-
-.add-user-button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 32px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.add-user-button:hover {
-  background-color: #0056b3;
-}
-
-
+    .fake-add-device {
+      position: absolute;
+      top: 445px;
+      left: 62%;
+      transform: translateX(-50%);
+      width: 80%;
+      background-color: #fff;
+      border: 2px solid #ffffff;
+      padding: 8px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      color: #1d2d50;
+      z-index: 10;
+    }
+    .fake-second-box {
+      position: absolute;
+      top: 415px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10%;
+      background-color: #fff;
+      border: 2px solid #ffffff;
+      padding: 20px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      color: #1d2d50;
+      z-index: 10;
+    }
+    .owner-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .owner-field select {
+      width: 80%;
+    }
+    .add-user-button {
+      background-color: #007bff;
+      color: white;
+      padding: 8px 32px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .add-user-button:hover {
+      background-color: #0056b3;
+    }
     .btn-success { background-color: #007bff; color: #fff; }
     .btn-info { background-color: #007bff; color: #fff; }
     .btn-warning { background-color: #007bff; color: #fff; }
@@ -157,8 +149,6 @@
       font-weight: 500;
       transition: background-color 0.3s, transform 0.3s;
     }
-
-    /* Main Content Area */
     .main-content {
       flex: 1;
       padding: 30px 40px;
@@ -172,8 +162,6 @@
     }
     .main-header h2 { font-size: 28px; color: #1d2d50; margin: 0; }
     .welcome-message { font-size: 20px; color: #1d2d50; }
-
-    /* Content Container */
     .content-container {
       max-width: 2000px;
       margin: 0 auto;
@@ -183,16 +171,13 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       min-height: calc(100vh - 190px);
     }
-
-    /* Form Container (for Add Device Form) */
     .form-container {
       max-width: 800px;
       margin: 50px auto;
       padding: 30px;
       background: #fff;
       border-radius: 0px;
-              border: 2px solid #121111;
-
+      border: 2px solid #121111;
     }
     .form-container h1 {
       text-align: center;
@@ -211,23 +196,70 @@
     }
     button { width: 100%; padding: 10px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
     .btn-active:hover {
-  background-color: #e0e0e0; /* Replace with your desired hover color */
-  color: #1d2d50; /* Adjust text color if needed */
-}
-
+      background-color: #e0e0e0;
+      color: #1d2d50;
+    }
     button:hover { background-color: #0056b3; }
     .back-button { margin-top: 15px; text-align: center; }
     .back-button a { text-decoration: none; }
     .back-button button { background-color: #6c757d; color: white; }
     .back-button button:hover { background-color: #5a6268; }
-
-    /* Media Queries */
     @media (max-width: 768px) {
       .page-wrapper { flex-direction: column; }
       .sidebar { width: 100%; flex-direction: row; justify-content: space-around; padding: 15px; position: relative; }
       .sidebar h1 { font-size: 20px; }
       .main-content { padding: 20px; }
       .content-container { margin: 20px auto; }
+    }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .modal-content h1 {
+      color: #333;
+    }
+    .modal-content p {
+      font-size: 16px;
+      color: #555;
+      margin: 10px 0;
+    }
+    .modal-content p strong {
+      color: #333;
+    }
+    .modal-content .button-group {
+      margin-top: 20px;
+    }
+    .modal-content .button-group a button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .modal-content .button-group a button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -250,14 +282,10 @@
             <button type="submit" class="btn-danger">Logout</button>
           </form>
         </div>
-          <div class="form-group">
-
-</div>
-
+        <div class="form-group"></div>
       </div>
-      <!-- Fake Add Device Button (for display only) -->
       <div class="fake-add-device">Add Device</div>
-        <div class="fake-second-box"></div>
+      <div class="fake-second-box"></div>
     </aside>
 
     <!-- Main Content Area -->
@@ -269,67 +297,86 @@
       <div class="content-container">
         <div class="form-container">
           <h1>Add a New Device</h1>
-          <!-- Device Filter Dropdown -->
-
-      <!-- Form Section -->
-<form method="post">
-  {% csrf_token %}
-
-  <!-- Device Owner Field with "Add a User" Button -->
-  <div class="form-group owner-container">
-    <label for="id_device_user">Device Owner</label>
-    <div class="owner-field">
-      {{ form.device_user }}
-      <a href="{% url 'device_user_list' %}" class="add-user-button">Add a User</a>
-    </div>
-  </div>
-
-  <!-- Device Filter Dropdown (moved below the owner field) -->
-  <div class="form-group">
-    <label for="device-filter">Filter by Device Type</label>
-    <select id="device-filter" name="filter">
-      <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
-      <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
-      <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
-      <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
-      <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
-    </select>
-  </div>
-
-  <!-- Remaining Fields -->
-  <div class="form-group">
-    <label for="id_model">Device Model</label>
-    {{ form.model }}
-  </div>
-  <div class="form-group">
-    <label for="id_warranty_end_date">Warranty End Date</label>
-    {{ form.warranty_end_date }}
-  </div>
-<div class="form-group">
-  <label for="id_serial_number">Serial Number (optional)</label>
-  {{ form.serial_number }}
-</div>
-
-  <button type="submit">Add Device</button>
-</form>
-
-<div class="back-button">
-  <a href="{% url 'device_list' %}">
-    <button type="button">Back to Device List</button>
-  </a>
-</div>
-
-
+          <!-- Form Section -->
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group owner-container">
+              <label for="id_device_user">Device Owner</label>
+              <div class="owner-field">
+                {{ form.device_user }}
+                <a href="{% url 'device_user_list' %}" class="add-user-button">Add a User</a>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="device-filter">Filter by Device Type</label>
+              <select id="device-filter" name="filter">
+                <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
+                <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
+                <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
+                <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
+                <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="id_model">Device Model</label>
+              {{ form.model }}
+            </div>
+            <div class="form-group">
+              <label for="id_warranty_end_date">Warranty End Date</label>
+              {{ form.warranty_end_date }}
+            </div>
+            <div class="form-group">
+              <label for="id_serial_number">Serial Number (optional)</label>
+              {{ form.serial_number }}
+            </div>
+            <button type="submit">Add Device</button>
+          </form>
+          <div class="back-button">
+            <a href="{% url 'device_list' %}">
+              <button type="button">Back to Device List</button>
+            </a>
+          </div>
         </div>
       </div>
     </main>
   </div>
+
+  <!-- Modal for Device Added -->
+  {% if device %}
+  <div id="deviceAddedModal" class="modal">
+    <div class="modal-content">
+      <h1>Device Successfully Added!</h1>
+      <p><strong>Model:</strong> {{ device.model.name }}</p>
+      <p><strong>Owner:</strong> {{ device.device_user }}</p>
+      <p><strong>Unique ID:</strong> {{ device.user_device_id }}</p>
+      <p><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</p>
+      <p><strong>Time Left:</strong> {{ warranty_time_left }}</p>
+      <div class="button-group">
+        <a href="{% url 'device_list' %}">
+          <button>Go to Device List</button>
+        </a>
+        <a href="{% url 'add_device' %}">
+          <button>Add Another Device</button>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <script>
     function applyFilter() {
       const selectedFilter = document.getElementById("device-filter").value;
       window.location.href = `?filter=${selectedFilter}`;
     }
+
+    {% if device %}
+    document.addEventListener("DOMContentLoaded", function() {
+      var modal = document.getElementById("deviceAddedModal");
+      if (modal) {
+        modal.style.display = "block";
+      }
+    });
+    {% endif %}
   </script>
 </body>
 </html>

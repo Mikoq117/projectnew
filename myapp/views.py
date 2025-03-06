@@ -99,7 +99,6 @@ def add_device(request):
     elif selected_filter == "samsung-tab":
         queryset = queryset.filter(platform="Android", device_type="Tablet")
 
-    # Initialize the form with the filtered queryset
     if request.method == "POST":
         form = DeviceForm(request.POST, user=request.user)
         form.fields['model'].queryset = queryset  # Apply filtered queryset
@@ -108,7 +107,14 @@ def add_device(request):
             device.user_device_id = Device.generate_unique_id(request.user)  # Assign a unique ID
             device.app_user = request.user  # Assign the logged-in user
             device.save()
-            return redirect("device_added", device_id=device.id)  # Redirect after adding
+            warranty_time_left = device.warranty_time_left()  # Calculate warranty time left
+            # Re-render add_device.html with the new device to trigger the modal
+            return render(request, "add_device.html", {
+                "form": DeviceForm(user=request.user),
+                "selected_filter": selected_filter,
+                "device": device,
+                "warranty_time_left": warranty_time_left,
+            })
         else:
             print(form.errors)  # Debugging: Print errors if form is invalid
     else:
@@ -116,7 +122,6 @@ def add_device(request):
         form.fields['model'].queryset = queryset  # Apply filtered queryset
 
     return render(request, "add_device.html", {"form": form, "selected_filter": selected_filter})
-
 
 
 
