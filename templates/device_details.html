@@ -6,24 +6,24 @@
   <title>Device Details</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
   <style>
-    /* Global */
+    /* Global Styles */
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; height: 100%; font-family: 'Roboto', sans-serif; }
     body {
       background-color: #f5f7fa;
       color: #333;
-      font-size: 16px;
+      font-size: 18px;
       line-height: 1.5;
     }
     a { text-decoration: none; color: inherit; }
 
-    /* Page Wrapper */
+    /* Page Layout */
     .page-wrapper {
       display: flex;
       min-height: 100vh;
     }
 
-    /* Sidebar Navigation */
+    /* Sidebar Styles */
     .sidebar {
       position: relative;
       width: 250px;
@@ -105,7 +105,6 @@
       font-weight: 500;
       transition: background-color 0.3s, transform 0.3s;
     }
-    /* Fake Add Device Elements */
     .fake-add-device {
       position: absolute;
       top: 445px;
@@ -128,24 +127,25 @@
       width: 10%;
       background-color: #fff;
       border: 2px solid #ffffff;
-      padding: 20px 18px;
+      padding: 20px 5px;
       border-radius: 4px;
       font-size: 20px;
       color: #1d2d50;
       z-index: 10;
     }
 
-    /* Main Content Area */
+    /* Main Content Styles */
     .main-content {
       flex: 1;
       padding: 30px 40px;
       overflow-y: auto;
     }
     .content-container {
-      max-width: 800px;
-      margin: 50px auto;
+      max-width: 1400px; /* Increased container width */
+       margin: 200px auto 50px auto;
       background: #fff;
-      padding: 20px;
+        border: 2px solid #353434;
+      padding: 60px; /* Increased padding */
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
@@ -154,27 +154,49 @@
       color: #333;
       margin-bottom: 20px;
     }
-    ul {
-      list-style: none;
-      padding: 0;
+
+    /* Header Box */
+    .header-box {
+        width: 40%;
+      border: 2px solid #353434;
+      padding: 10px;
+
+         margin: 0 auto 30px auto;
+      text-align: center;
     }
-    li {
-      margin-bottom: 10px;
-      font-size: 16px;
-      color: #555;
+    .header-box h1 {
+      margin: 0;
+      font-size: 42px;
     }
-    strong {
-      font-weight: bold;
+
+    /* Details Grid */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+    .details-grid .column {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .details-grid p {
+      margin: 0;
+      font-size: 24px; /* Increased details font size */
+    }
+    .details-grid p strong {
       color: #333;
     }
+
+    /* Button Group Styles */
     .button-group {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 30px;
     }
-    button {
-      padding: 10px;
-      font-size: 16px;
+    .button-group a button, .button-group form button {
+      padding: 16px; /* Increased padding for bigger buttons */
+      font-size: 22px; /* Increased button font size */
       border: none;
       border-radius: 4px;
       cursor: pointer;
@@ -183,6 +205,17 @@
     .btn-primary { background-color: #007bff; }
     .btn-danger { background-color: #dc3545; }
     .btn-secondary { background-color: #6c757d; }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      .button-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -205,35 +238,47 @@
           </form>
         </div>
       </div>
-      <div class="fake-add-device">Add Device</div>
+      <div class="fake-add-device">Device Details</div>
       <div class="fake-second-box"></div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="main-content">
       <div class="content-container">
-        <h1>Device Details</h1>
-        <ul>
-          <li><strong>Owner:</strong> {{ device.device_user }}</li>
-          <li><strong>Unique ID:</strong> {{ device.user_device_id }}</li>
-          <li><strong>Model:</strong> {{ device.model.name }}</li>
-          <li><strong>Release Date:</strong> {{ device.model.release_date }}</li>
-          <li><strong>Display Size:</strong> {{ device.model.display_size }}</li>
-          <li><strong>Operating System:</strong> {{ device.model.os }}</li>
-          <li><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</li>
-          <li><strong>Time Left:</strong> {{ device.warranty_time_left }}</li>
-          <li><strong>OS Support End Date:</strong> {{ device.os_support_end|date:"d M Y" }}</li>
-          <li><strong>Time Left for OS Support:</strong> {{ device.os_support_time_left }}</li>
-          <li><strong>Realistic Usability Timeframe:</strong> {{ device.realistic_usability_timeframe }}</li>
-        </ul>
+        <div class="header-box">
+          <h1>Device Details</h1>
+        </div>
+        <div class="details-grid">
+          <!-- Left Column -->
+          <div class="column left">
+            <p><strong>Owner:</strong> {{ device.device_user }}</p>
+            <p><strong>Unique ID:</strong> {{ device.user_device_id }}</p>
+            <p><strong>Model:</strong> {{ device.model.name }}</p>
+          </div>
+          <!-- Middle Column -->
+          <div class="column middle">
+            <p><strong>Release Date:</strong> {{ device.model.release_date }}</p>
+            <p><strong>Display Size:</strong> {{ device.model.display_size }}</p>
+            <p><strong>Operating System:</strong> {{ device.model.os }}</p>
+          </div>
+          <!-- Right Column -->
+          <div class="column right">
+            <p><strong>Warranty End Date:</strong> {{ device.warranty_end_date }}</p>
+            <p><strong>Time Left:</strong> {{ device.warranty_time_left }}</p>
+            <p><strong>OS Support End Date:</strong> {{ device.os_support_end|date:"d M Y" }}</p>
+            <p><strong>Time Left for OS Support:</strong> {{ device.os_support_time_left }}</p>
+            <p><strong>Realistic Usability Timeframe:</strong> {{ device.realistic_usability_timeframe }}</p>
+          </div>
+        </div>
         <div class="button-group">
           <a href="{% url 'edit_device' device.id %}">
             <button class="btn-primary">Edit Device</button>
           </a>
-          <form action="{% url 'delete_device' device.id %}" method="POST">
-            {% csrf_token %}
-            <button class="btn-danger" type="submit">Delete Device</button>
-          </form>
+          <form action="{% url 'delete_device' device.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete?');">
+  {% csrf_token %}
+  <button class="btn-danger" type="submit">Delete Device</button>
+</form>
+
           <a href="{% url 'device_list' %}">
             <button class="btn-secondary">Back to Device List</button>
           </a>

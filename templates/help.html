@@ -1,234 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot Help</title>
-    <style>
-        /* General styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chatbot Help</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    a { text-decoration: none; color: inherit; }
 
-        .chat-container {
-            width: 90%;
-            max-width: 500px;
-            background: white;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+    /* Page Layout */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .chat-header {
-            background: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            position: relative;
-        }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 250px;
+      background-color: #1d2d50;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h1 {
+      font-size: 34px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;
+    }
+    .sidebar nav a,
+    .sidebar nav form { width: 100%; }
+    .sidebar nav a button,
+    .sidebar nav form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sidebar nav a button:hover,
+    .sidebar nav form button:hover {
+      transform: translateY(-2px);
+    }
+    .btn-dashboard { background-color: #007bff; color: #fff; }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-success { background-color: #007bff; color: #fff; }
+    .btn-info    { background-color: #007bff; color: #fff; }
+    /* Active indicator for AI Device Help */
+    .btn-active {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
+      background-color: #f5f7fa;
+      color: #1d2d50;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .btn-active::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -25px;
+      bottom: 0;
+      width: 30px;
+      background-color: #f5f7fa;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .btn-warning { background-color: #007bff; color: #fff; }
+    .btn-danger  { background-color: #dc3545; color: #fff; }
+    .logout-container { margin-top: auto; }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
 
-        /* Back button */
-        .back-button {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: white;
-            color: #007bff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .content-container {
+      width: 90%;
+      max-width: 800px;
+      background: white;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      position: relative;
+    }
+    .back-button {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      color: #007bff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .back-button:hover {
+      background: #0056b3;
+      color: white;
+    }
 
-        .back-button:hover {
-            background: #0056b3;
-            color: white;
-        }
-
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            background: #f9f9f9;
-        }
-
-        /* Chat bubbles */
-        .message {
-            max-width: 80%;
-            margin-bottom: 12px;
-            padding: 10px 15px;
-            border-radius: 20px;
-            word-wrap: break-word;
-        }
-
-        .user-message {
-            align-self: flex-end;
-            background: #007bff;
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message {
-            align-self: flex-start;
-            background: #e0e0e0;
-            color: black;
-            border-bottom-left-radius: 5px;
-        }
-
-        /* Prompt builder */
-        .prompt-builder {
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #ddd;
-        }
-
-        .prompt-builder label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .prompt-builder input, .prompt-builder select, .prompt-builder textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .prompt-builder button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .prompt-builder button:hover {
-            background: #0056b3;
-        }
-
-    </style>
+    /* Landscape Chat & Prompt Layout */
+    .chat-body {
+      display: flex;
+      flex-direction: row;
+      height: 400px;
+    }
+    .chat-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #ddd;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+    .prompt-column {
+      flex: 1;
+      padding: 15px;
+      background: white;
+    }
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .message {
+      max-width: 80%;
+      margin-bottom: 12px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      word-wrap: break-word;
+    }
+    .user-message {
+      align-self: flex-end;
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background: #e0e0e0;
+      color: black;
+      border-bottom-left-radius: 5px;
+    }
+    .prompt-builder {
+      display: flex;
+      flex-direction: column;
+    }
+    .prompt-builder label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .prompt-builder input,
+    .prompt-builder select,
+    .prompt-builder textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .prompt-builder button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .prompt-builder button:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
 <body>
-
-    <div class="chat-container">
-        <div class="chat-header">
-            <a href="{% url 'dashboard' %}" class="back-button">Dashboard</a>
-            AI Device Recommendations
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h1>Asset Manager</h1>
+      <div class="nav-container">
+        <nav>
+          <a href="{% url 'dashboard' %}">
+            <button class="btn-dashboard">Dashboard</button>
+          </a>
+          <a href="{% url 'device_list' %}">
+            <button class="btn-primary">Device List</button>
+          </a>
+          <a href="{% url 'device_user_list' %}">
+            <button class="btn-success">Device User List</button>
+          </a>
+          <a href="{% url 'reports' %}">
+            <button class="btn-info">Reports</button>
+          </a>
+          <a href="{% url 'help_page' %}">
+            <button class="btn-active">AI Device Help</button>
+          </a>
+        </nav>
+        <div class="logout-container">
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Logout</button>
+          </form>
         </div>
-        <div class="chat-box" id="chatbox"></div>
-
-        <!-- Prompt Builder -->
-        <div class="prompt-builder">
-            <label for="budget">Budget per device (€):</label>
-            <input type="number" id="budget" placeholder="Enter budget" min="0" required>
-
-            <label for="deviceType">Device Type:</label>
-            <select id="deviceType">
+      </div>
+    </aside>
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="content-container">
+        <div class="chat-header">
+          <a href="{% url 'dashboard' %}" class="back-button">Dashboard</a>
+          AI Device Recommendations
+        </div>
+        <!-- New Landscape Layout for Chat & Prompt -->
+        <div class="chat-body">
+          <div class="chat-column">
+            <div class="chat-box" id="chatbox">
+              <!-- Chat messages will appear here -->
+            </div>
+          </div>
+          <div class="prompt-column">
+            <div class="prompt-builder">
+              <label for="budget">Budget per device (€):</label>
+              <input type="number" id="budget" placeholder="Enter budget" min="0" required>
+              <label for="deviceType">Device Type:</label>
+              <select id="deviceType">
                 <option value="Phone">Phone</option>
                 <option value="Tablet">Tablet</option>
-            </select>
-
-            <label for="apps">Required App(s):</label>
-            <input type="text" id="apps" placeholder="List required apps">
-
-            <label for="extraNeeds">Extra Needs:</label>
-            <textarea id="extraNeeds" placeholder="Mention any extra requirements"></textarea>
-
-            <button onclick="generatePrompt()"> Get Recommendation</button>
+              </select>
+              <label for="apps">Required App(s):</label>
+              <input type="text" id="apps" placeholder="List required apps">
+              <label for="extraNeeds">Extra Needs:</label>
+              <textarea id="extraNeeds" placeholder="Mention any extra requirements"></textarea>
+              <button onclick="generatePrompt()">Get Recommendation</button>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+    </main>
+  </div>
 
-    <script>
-        function generatePrompt() {
-            const budget = document.getElementById("budget").value;
-            const deviceType = document.getElementById("deviceType").value;
-            const apps = document.getElementById("apps").value.trim();
-            const extraNeeds = document.getElementById("extraNeeds").value.trim();
-
-            if (!budget) {
-                alert("Please enter a budget.");
-                return;
-            }
-
-            // Construct structured prompt
-            let userMessage = `I need a ${deviceType} recommendation within a budget of €${budget}.`;
-            if (apps) userMessage += ` It must support the following apps: ${apps}.`;
-            if (extraNeeds) userMessage += ` Additional requirements: ${extraNeeds}.`;
-
-            // Send to chatbot
-            sendMessage(userMessage);
-        }
-
-        function sendMessage(userMessage) {
-            const chatbox = document.getElementById("chatbox");
-
-            // Add user message
-            addMessage(userMessage, "user-message");
-
-            // Send request to chatbot API
-            fetch("/api/chatbot/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userMessage })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const botMessage = data.reply || "Error getting response.";
-                addMessage(botMessage, "bot-message");
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                addMessage("⚠️ Error connecting to chatbot.", "bot-message");
-            });
-
-            chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll
-        }
-
-        function addMessage(text, className) {
-            const chatbox = document.getElementById("chatbox");
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message", className);
-
-            // Convert Markdown-style formatting to HTML
-            let formattedText = text
-                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")  // Bold (**bold** → <strong>bold</strong>)
-                .replace(/^# (.*?)$/gm, "<h2>$1</h2>")  // H1 (# Heading → <h2>Heading</h2>)
-                .replace(/^## (.*?)$/gm, "<h3>$1</h3>") // H2 (## Heading → <h3>Heading</h3>)
-                .replace(/^### (.*?)$/gm, "<h4>$1</h4>") // H3 (### Heading → <h4>Heading</h4>)
-                .replace(/^- (.*?)/gm, "<li>$1</li>"); // Bullet points (- item → <li>item</li>)
-
-            // Wrap <li> elements in <ul> to create a proper bullet list
-            if (formattedText.includes("<li>")) {
-                formattedText = `<ul>${formattedText}</ul>`;
-            }
-
-            // Preserve new lines for readability
-            formattedText = formattedText.replace(/\n/g, "<br>");
-
-            messageElement.innerHTML = formattedText;
-            chatbox.appendChild(messageElement);
-            chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll
-        }
-    </script>
-
+  <script>
+    function generatePrompt() {
+      const budget = document.getElementById("budget").value;
+      const deviceType = document.getElementById("deviceType").value;
+      const apps = document.getElementById("apps").value.trim();
+      const extraNeeds = document.getElementById("extraNeeds").value.trim();
+      if (!budget) {
+        alert("Please enter a budget.");
+        return;
+      }
+      let userMessage = `I need a ${deviceType} recommendation within a budget of €${budget}.`;
+      if (apps) userMessage += ` It must support the following apps: ${apps}.`;
+      if (extraNeeds) userMessage += ` Additional requirements: ${extraNeeds}.`;
+      sendMessage(userMessage);
+    }
+    function sendMessage(userMessage) {
+      const chatbox = document.getElementById("chatbox");
+      addMessage(userMessage, "user-message");
+      fetch("/api/chatbot/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const botMessage = data.reply || "Error getting response.";
+        addMessage(botMessage, "bot-message");
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        addMessage("⚠️ Error connecting to chatbot.", "bot-message");
+      });
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    function addMessage(text, className) {
+      const chatbox = document.getElementById("chatbox");
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message", className);
+      let formattedText = text
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+          .replace(/^# (.*?)$/gm, "<h2>$1</h2>")
+          .replace(/^## (.*?)$/gm, "<h3>$1</h3>")
+          .replace(/^### (.*?)$/gm, "<h4>$1</h4>")
+          .replace(/^- (.*?)/gm, "<li>$1</li>");
+      if (formattedText.includes("<li>")) {
+          formattedText = `<ul>${formattedText}</ul>`;
+      }
+      formattedText = formattedText.replace(/\n/g, "<br>");
+      messageElement.innerHTML = formattedText;
+      chatbox.appendChild(messageElement);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
 </body>
 </html>

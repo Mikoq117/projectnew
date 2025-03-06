@@ -1,96 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Device User</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Device User</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  <style>
+    /* Global */
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.5;
+      display: flex;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    /* Sidebar (from device_user_list.html) */
+    .sidebar {
+      width: 250px;
+      background-color: #1d2d50;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h1 {
+      font-size: 34px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;
+    }
+    .sidebar nav a,
+    .sidebar nav form {
+      width: 100%;
+    }
+    .sidebar nav a button,
+    .sidebar nav form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sidebar nav a button:hover,
+    .sidebar nav form button:hover {
+      transform: translateY(-2px);
+    }
+    .btn-dashboard {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .btn-active {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
+      background-color: #f5f7fa;
+      color: #1d2d50;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .btn-active::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -25px;
+      bottom: 0;
+      width: 30px;
+      background-color: #f5f7fa;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-success { background-color: #f5f7fa; color: #0c0c0c; }
+    .btn-info    { background-color: #007bff; color: #fff; }
+    .btn-warning { background-color: #007bff; color: #fff; }
+    .btn-danger  { background-color: #dc3545; color: #fff; }
+    .logout-container {
+      margin-top: auto;
+    }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="date"],
-        select {
-            padding: 8px;
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        button {
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            color: white;
-            background-color: #007bff;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            margin-left: 10px;
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .button-group a {
-            text-decoration: none;
-        }
-    </style>
+    /* Main Content Area */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .main-header h2 {
+      font-size: 28px;
+      color: #1d2d50;
+      margin: 0;
+    }
+    .welcome-message {
+      font-size: 20px;
+      color: #1d2d50;
+    }
+    /* Content Container (overall page container) */
+    .content-container {
+      max-width: 1900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+    }
+    /* Form Container Styling (matching device_user_list "Add New User" container) */
+    .form-container {
+      background: #f9f9f9;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      height: auto;
+      max-width: 800px;
+      margin: 50px auto;
+    }
+    .form-container h1 {
+      text-align: center;
+      font-size: 24px;
+      color: #1d2d50;
+      margin-bottom: 20px;
+    }
+    .form-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .form-container label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 20px;
+      color: #1d2d50;
+    }
+    .form-container input, .form-container select {
+      padding:10px;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 18px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .button-group a button, .button-group button {
+      padding: 12px 18px;
+      font-size: 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+    .btn-primary {
+      background-color: #007bff;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px;
+      }
+      .sidebar h1 {
+        font-size: 20px;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .content-container {
+        margin: 20px auto;
+        height: auto;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Edit Device User</h1>
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation (from device_user_list.html) -->
+    <aside class="sidebar">
+      <h1>Asset Manager</h1>
+      <div class="nav-container">
+        <nav>
+          <a href="{% url 'dashboard' %}">
+            <button class="btn-dashboard">Dashboard</button>
+          </a>
+          <a href="{% url 'device_list' %}">
+            <button class="btn-primary">Device List</button>
+          </a>
+          <a href="{% url 'device_user_list' %}">
+            <button class="btn-success btn-active">Device User List</button>
+          </a>
+          <a href="{% url 'reports' %}">
+            <button class="btn-info">Reports</button>
+          </a>
+          <a href="{% url 'help_page' %}">
+            <button class="btn-warning">AI Device Help</button>
+          </a>
+        </nav>
+        <div class="logout-container">
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Logout</button>
+          </form>
+        </div>
+      </div>
+    </aside>
 
-        <form method="POST">
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="content-container">
+        <div class="form-container">
+          <h1>Edit Device User</h1>
+          <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-
             <div class="button-group">
-                <button type="submit">Save Changes</button>
-                <a href="{% url 'device_user_list' %}">
-                    <button type="button" class="btn-secondary">Cancel</button>
-                </a>
+              <button type="submit" class="btn-primary">Save Changes</button>
+              <a href="{% url 'device_user_list' %}">
+                <button type="button" class="btn-secondary">Cancel</button>
+              </a>
             </div>
-        </form>
-    </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

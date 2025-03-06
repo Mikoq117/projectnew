@@ -1,313 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .button-group {
-            margin: 20px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-        button {
-            padding: 10px 15px;
-            font-size: 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  <style>
+    /* Global */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.5;
+      display: flex;
+    }
+    a { text-decoration: none; color: inherit; }
 
-        .btn-secondary {
-            background-color: #1d6f42;
-            color: white;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        .filter-section {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 8px;
-            width: 200px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-    </style>
+    /* Page Layout */
+    .page-wrapper {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #1d2d50;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h1 {
+      font-size: 34px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;
+    }
+    .sidebar nav a, .sidebar nav form { width: 100%; }
+    .sidebar nav a button,
+    .sidebar nav form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sidebar nav a button:hover,
+    .sidebar nav form button:hover {
+      transform: translateY(-2px);
+    }
+    /* Added Dashboard Button Style */
+    .btn-dashboard { background-color: #007bff; color: #fff; }
+    .btn-active {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
+      background-color: #007bff;
+      color: #e5e7ea;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+
+        .btn-info {
+  position: relative;
+}
+
+.btn-info::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -25px; /* Adjust as needed */
+  bottom: 0;
+  width: 30px;
+  background-color: #ffffff; /* Or the desired color */
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+    }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-success { background-color: #007bff; color: #fff; }
+    .btn-info    { background-color: #ffffff; color: #121111; }
+    .btn-warning { background-color: #007bff; color: #fff; }
+    .btn-danger  { background-color: #dc3545; color: #fff; }
+    .logout-container { margin-top: auto; }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      overflow-y: auto;
+    }
+    .content-container {
+      max-width: 1400px; /* Widened overall container */
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 { text-align: center; color: #333; }
+
+    /* Filter & Export Container */
+    .filter-export-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .filter-export-container .filter-section {
+      display: flex;
+      align-items: center;
+    }
+    .filter-export-container input[type="text"],
+    .filter-export-container select {
+      padding: 12px;
+      width: 250px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .export-button-container form button {
+      padding: 15px 20px;
+      font-size: 18px;
+    }
+
+    /* For Device-User Filter (if needed) */
+    .filter-export-container-user {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+    .filter-export-container-user input[type="text"],
+    .filter-export-container-user select {
+      padding: 12px;
+      width: 250px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    /* Scrollable Table Containers */
+    .scrollable-table {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td { padding: 10px; text-align: left; }
+    th { background-color: #007bff; color: white; }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px;
+      }
+      .sidebar h1 { font-size: 20px; }
+      .main-content { padding: 20px; }
+      .content-container { margin: 20px auto; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h1>Asset Manager</h1>
+      <div class="nav-container">
+        <nav>
+          <a href="{% url 'dashboard' %}">
+            <button class="btn-dashboard">Dashboard</button>
+          </a>
+          <a href="{% url 'device_list' %}">
+            <button class="btn-active">Device List</button>
+          </a>
+          <a href="{% url 'device_user_list' %}">
+            <button class="btn-success">Device User List</button>
+          </a>
+          <a href="{% url 'reports' %}">
+            <button class="btn-info">Reports</button>
+          </a>
+          <a href="{% url 'help_page' %}">
+            <button class="btn-warning">AI Device Help</button>
+          </a>
+        </nav>
+        <div class="logout-container">
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Logout</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-container">
         <h1>Reports</h1>
 
-        <!-- Navigation Buttons -->
-        <div class="button-group">
-            <a href="{% url 'dashboard' %}">
-                <button class="btn-primary">Dashboard</button>
-            </a>
+        <!-- Filter and Export for Device Table -->
+        <div class="filter-export-container">
+          <div class="filter-section">
+            <input type="text" id="device-search-bar" placeholder="Search devices..." onkeyup="filterDeviceTable()">
+            <select id="device-search-field" onchange="resetSearch()">
+              <option value="all">All Fields</option>
+              <option value="0">Model</option>
+              <option value="1">Owner</option>
+              <option value="2">Unique Device ID</option>
+              <option value="3">Warranty End Date</option>
+              <option value="4">Time Left (Warranty)</option>
+              <option value="5">Release Date</option>
+              <option value="6">Display Size</option>
+              <option value="7">Operating System</option>
+              <option value="8">Platform</option>
+              <option value="9">OS Support End Date</option>
+              <option value="10">Time Left for OS Support</option>
+              <option value="11">Realistic Usability Timeframe</option>
+            </select>
+          </div>
+          <div class="export-button-container">
             <form method="POST" action="{% url 'export_excel' %}">
-                {% csrf_token %}
-              <button id="export-visible-data" class="btn-secondary" type="button">Export Visible Device Data to CSV</button>
-
+              {% csrf_token %}
+              <button id="export-visible-data" class="btn-secondary" type="button">
+                Export Visible Device Data to CSV
+              </button>
             </form>
+          </div>
+        </div>
+        <div class="scrollable-table">
+          <table id="device-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Owner</th>
+                <th>Unique Device ID</th>
+                <th>Warranty End Date</th>
+                <th>Time Left (Warranty)</th>
+                <th>Release Date</th>
+                <th>Display Size</th>
+                <th>Operating System</th>
+                <th>Platform</th>
+                <th>OS Support End Date</th>
+                <th>Time Left for OS Support</th>
+                <th>Realistic Usability Timeframe</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for device in devices %}
+                <tr>
+                  <td>{{ device.model.name }}</td>
+                  <td>{{ device.device_user }}</td>
+                  <td>{{ device.user_device_id }}</td>
+                  <td>{{ device.warranty_end_date }}</td>
+                  <td>{{ device.warranty_time_left }}</td>
+                  <td>{{ device.model.release_date }}</td>
+                  <td>{{ device.model.display_size }}</td>
+                  <td>{{ device.model.os }}</td>
+                  <td>{{ device.model.platform }}</td>
+                  <td>{{ device.os_support_end|date:"d M Y" }}</td>
+                  <td>{{ device.os_support_time_left }}</td>
+                  <td>{{ device.realistic_usability_timeframe }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
 
+        <!-- Filter for Device-User Table -->
+        <h2>Your Device Users</h2>
+        <div class="filter-export-container-user">
+          <input type="text" id="device-user-search-bar" placeholder="Search device users..." onkeyup="filterDeviceUserTable()">
+          <select id="device-user-search-field" onchange="resetDeviceUserSearch()">
+            <option value="all">All Fields</option>
+            <option value="0">Full Name</option>
+            <option value="1">Position</option>
+            <option value="2">Location</option>
+            <option value="3">Phone Number</option>
+            <option value="4">Email</option>
+          </select>
+        </div>
+        <div class="scrollable-table">
+          <table id="device-user-table">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Position</th>
+                <th>Location</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in device_users %}
+                <tr>
+                  <td><span class="user-link">{{ user.full_name }}</span></td>
+                  <td>{{ user.position|default:"N/A" }}</td>
+                  <td>{{ user.location }}</td>
+                  <td>{{ user.phone_number|default:"N/A" }}</td>
+                  <td>{{ user.email|default:"N/A" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
 
-
-        <!-- Device Table -->
- <!-- Search for devices -->
-<h2>Your Devices</h2>
-
-<!-- Search Section -->
-<div class="search-section">
-    <input type="text" id="device-search-bar" placeholder="Search devices..." onkeyup="filterDeviceTable()">
-    <select id="device-search-field" onchange="resetSearch()">
-        <option value="all">All Fields</option>
-        <option value="0">Model</option>
-        <option value="1">Owner</option>
-        <option value="2">Unique Device ID</option>
-        <option value="3">Warranty End Date</option>
-        <option value="4">Time Left (Warranty)</option>
-        <option value="5">Release Date</option>
-        <option value="6">Display Size</option>
-        <option value="7">Operating System</option>
-        <option value="8">Platform</option>
-        <option value="9">OS Support End Date</option>
-        <option value="10">Time Left for OS Support</option>
-        <option value="11">Realistic Usability Timeframe</option>
-    </select>
-</div>
-
-<!-- Device Table -->
-<table id="device-table">
-    <thead>
-        <tr>
-            <th>Model</th>
-            <th>Owner</th>
-            <th>Unique Device ID</th>
-            <th>Warranty End Date</th>
-            <th>Time Left (Warranty)</th>
-            <th>Release Date</th>
-            <th>Display Size</th>
-            <th>Operating System</th>
-            <th>Platform</th>
-            <th>OS Support End Date</th>
-            <th>Time Left for OS Support</th>
-            <th>Realistic Usability Timeframe</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for device in devices %}
-            <tr>
-                <td>{{ device.model.name }}</td>
-                <td>{{ device.device_user }}</td>
-                <td>{{ device.user_device_id }}</td>
-                <td>{{ device.warranty_end_date }}</td>
-                <td>{{ device.warranty_time_left }}</td>
-                <td>{{ device.model.release_date }}</td>
-                <td>{{ device.model.display_size }}</td>
-                <td>{{ device.model.os }}</td>
-                <td>{{ device.model.platform }}</td>
-                <td>{{ device.os_support_end|date:"d M Y" }}</td>
-                <td>{{ device.os_support_time_left }}</td>
-                <td>{{ device.realistic_usability_timeframe }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
-<!-- Search for device-users -->
-<h2>Your Device Users</h2>
-
-<!-- Search Section for Device-Users -->
-<div class="search-section">
-    <input type="text" id="device-user-search-bar" placeholder="Search device users..." onkeyup="filterDeviceUserTable()">
-    <select id="device-user-search-field" onchange="resetDeviceUserSearch()">
-        <option value="all">All Fields</option>
-        <option value="0">Full Name</option>
-        <option value="1">Position</option>
-        <option value="2">Location</option>
-        <option value="3">Phone Number</option>
-        <option value="4">Email</option>
-    </select>
-</div>
-
-<!-- Device-User Table -->
-<table id="device-user-table">
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>Position</th>
-            <th>Location</th>
-            <th>Phone Number</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in device_users %}
-            <tr>
-                <td>
-                   <span class="user-link">{{ user.full_name }}</span>
-                </td>
-                <td>{{ user.position|default:"N/A" }}</td>
-                <td>{{ user.location }}</td>
-                <td>{{ user.phone_number|default:"N/A" }}</td>
-                <td>{{ user.email|default:"N/A" }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-    </div>
- <!--SCRIPTS IN JAVA FOR SEARCHING-->
-
-
- <script>
-function filterDeviceTable() {
-    // Get the search input and selected search field for devices
-    const input = document.getElementById("device-search-bar").value.toLowerCase();
-    const selectedField = document.getElementById("device-search-field").value;
-    const table = document.getElementById("device-table");
-    const rows = table.getElementsByTagName("tr");
-
-    // Loop through all rows (skipping the header row)
-    for (let i = 1; i < rows.length; i++) {
+  <!-- Scripts for Searching and Exporting -->
+  <script>
+    function filterDeviceTable() {
+      const input = document.getElementById("device-search-bar").value.toLowerCase();
+      const selectedField = document.getElementById("device-search-field").value;
+      const table = document.getElementById("device-table");
+      const rows = table.getElementsByTagName("tr");
+      for (let i = 1; i < rows.length; i++) {
         const cells = rows[i].getElementsByTagName("td");
         let match = false;
-
-        // Search across all fields if 'All Fields' is selected
         if (selectedField === "all") {
-            for (let cell of cells) {
-                if (cell.innerText.toLowerCase().includes(input)) {
-                    match = true;
-                    break;
-                }
+          for (let cell of cells) {
+            if (cell.innerText.toLowerCase().includes(input)) {
+              match = true;
+              break;
             }
+          }
         } else {
-            // Search in a specific field (by column index) if selected
-            const cell = cells[parseInt(selectedField)];
-            if (cell && cell.innerText.toLowerCase().includes(input)) {
-                match = true;
-            }
+          const cell = cells[parseInt(selectedField)];
+          if (cell && cell.innerText.toLowerCase().includes(input)) {
+            match = true;
+          }
         }
-
-        // Show the row if there's a match, otherwise hide it
         rows[i].style.display = match ? "" : "none";
+      }
     }
-}
-
-function resetSearch() {
-    // Clear the search bar when the search field selection changes and reset the table
-    document.getElementById("device-search-bar").value = "";
-    filterDeviceTable();
-}
-
-function filterDeviceUserTable() {
-    // Get the search input and selected field for device-users
-    const input = document.getElementById("device-user-search-bar").value.toLowerCase();
-    const selectedField = document.getElementById("device-user-search-field").value;
-    const table = document.getElementById("device-user-table");
-    const rows = table.getElementsByTagName("tr");
-
-    // Loop through all rows (skipping the header row)
-    for (let i = 1; i < rows.length; i++) {
+    function resetSearch() {
+      document.getElementById("device-search-bar").value = "";
+      filterDeviceTable();
+    }
+    function filterDeviceUserTable() {
+      const input = document.getElementById("device-user-search-bar").value.toLowerCase();
+      const selectedField = document.getElementById("device-user-search-field").value;
+      const table = document.getElementById("device-user-table");
+      const rows = table.getElementsByTagName("tr");
+      for (let i = 1; i < rows.length; i++) {
         const cells = rows[i].getElementsByTagName("td");
         let match = false;
-
-        // Search across all fields if 'All Fields' is selected
         if (selectedField === "all") {
-            for (let cell of cells) {
-                if (cell.innerText.toLowerCase().includes(input)) {
-                    match = true;
-                    break;
-                }
+          for (let cell of cells) {
+            if (cell.innerText.toLowerCase().includes(input)) {
+              match = true;
+              break;
             }
+          }
         } else {
-            // Search in a specific field (by column index) if selected
-            const cell = cells[parseInt(selectedField)];
-            if (cell && cell.innerText.toLowerCase().includes(input)) {
-                match = true;
-            }
+          const cell = cells[parseInt(selectedField)];
+          if (cell && cell.innerText.toLowerCase().includes(input)) {
+            match = true;
+          }
         }
-
-        // Show the row if there's a match, otherwise hide it
         rows[i].style.display = match ? "" : "none";
+      }
     }
-}
-
-function resetDeviceUserSearch() {
-    // Clear the device-user search bar and reset the table when the field selection changes
-    document.getElementById("device-user-search-bar").value = "";
-    filterDeviceUserTable();
-}
-
-// Event listener for exporting visible device data to CSV
-document.getElementById("export-visible-data").addEventListener("click", function () {
-    // Get all visible rows from the device table
-    const rows = Array.from(document.querySelectorAll("#device-table tbody tr"))
+    function resetDeviceUserSearch() {
+      document.getElementById("device-user-search-bar").value = "";
+      filterDeviceUserTable();
+    }
+    document.getElementById("export-visible-data").addEventListener("click", function () {
+      const rows = Array.from(document.querySelectorAll("#device-table tbody tr"))
         .filter(row => row.style.display !== "none");
-
-    // Extract text data from each visible row and cell
-    const data = rows.map(row => {
+      const data = rows.map(row => {
         return Array.from(row.querySelectorAll("td")).map(cell => cell.innerText);
-    });
-
-    // Send the filtered data to the server for export
-    fetch("{% url 'export_filtered_data' %}", {
+      });
+      fetch("{% url 'export_filtered_data' %}", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
         },
         body: JSON.stringify({ data: data })
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        // Create a downloadable CSV file from the server response
+      })
+      .then(response => response.blob())
+      .then(blob => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
         link.download = "filtered_device_data.csv";
         link.click();
         window.URL.revokeObjectURL(url);
+      });
     });
-});
-</script>
-
+  </script>
+</body>
+</html>
