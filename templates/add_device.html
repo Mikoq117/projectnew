@@ -270,38 +270,56 @@
         <div class="form-container">
           <h1>Add a New Device</h1>
           <!-- Device Filter Dropdown -->
-          <div class="form-group">
-            <label for="device-filter">Filter by Device Type</label>
-            <select id="device-filter" onchange="applyFilter()">
-              <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
-              <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
-              <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
-              <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
-              <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
-            </select>
-          </div>
-          <form method="post">
-            {% csrf_token %}
-             <label for="id_device_user">Device Owner</label>
-  <div class="owner-field">
-    {{ form.device_user }}
-    <a href="{% url 'device_user_list' %}" class="add-user-button">Add a User</a>
+
+      <!-- Form Section -->
+<form method="post">
+  {% csrf_token %}
+
+  <!-- Device Owner Field with "Add a User" Button -->
+  <div class="form-group owner-container">
+    <label for="id_device_user">Device Owner</label>
+    <div class="owner-field">
+      {{ form.device_user }}
+      <a href="{% url 'device_user_list' %}" class="add-user-button">Add a User</a>
+    </div>
   </div>
-            <div class="form-group">
-              <label for="id_model">Device Model</label>
-              {{ form.model }}
-            </div>
-            <div class="form-group">
-              <label for="id_warranty_end_date">Warranty End Date</label>
-              {{ form.warranty_end_date }}
-            </div>
-            <button type="submit">Add Device</button>
-          </form>
-          <div class="back-button">
-            <a href="{% url 'device_list' %}">
-              <button type="button">Back to Device List</button>
-            </a>
-          </div>
+
+  <!-- Device Filter Dropdown (moved below the owner field) -->
+  <div class="form-group">
+    <label for="device-filter">Filter by Device Type</label>
+    <select id="device-filter" name="filter">
+      <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
+      <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
+      <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
+      <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
+      <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
+    </select>
+  </div>
+
+  <!-- Remaining Fields -->
+  <div class="form-group">
+    <label for="id_model">Device Model</label>
+    {{ form.model }}
+  </div>
+  <div class="form-group">
+    <label for="id_warranty_end_date">Warranty End Date</label>
+    {{ form.warranty_end_date }}
+  </div>
+<div class="form-group">
+  <label for="id_serial_number">Serial Number (optional)</label>
+  {{ form.serial_number }}
+</div>
+
+  <button type="submit">Add Device</button>
+</form>
+
+<div class="back-button">
+  <a href="{% url 'device_list' %}">
+    <button type="button">Back to Device List</button>
+  </a>
+</div>
+
+
         </div>
       </div>
     </main>

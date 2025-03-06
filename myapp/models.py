@@ -86,6 +86,8 @@ class Device(models.Model):
     model = models.ForeignKey("PhoneSpecs", on_delete=models.CASCADE)
     user_device_id = models.CharField(max_length=255, unique=True)  # Unique device ID
     warranty_end_date = models.DateField(null=True, blank=True)
+    serial_number = models.CharField(max_length=255, null=True, blank=True)  # New optional field
+
 
     @staticmethod
     def generate_unique_id(user):

@@ -29,7 +29,7 @@ class DeviceForm(forms.ModelForm):
 
     class Meta:
         model = Device
-        fields = ['device_user', 'model', 'warranty_end_date']
+        fields = ['device_user', 'model', 'warranty_end_date', 'serial_number']
         widgets = {
             'warranty_end_date': forms.DateInput(attrs={'type': 'date'}),
         }
