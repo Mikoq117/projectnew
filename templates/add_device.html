@@ -1,126 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Device</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 600px;
-            margin: 100px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .back-button {
-            margin-top: 15px;
-            text-align: center;
-        }
-        .back-button a {
-            text-decoration: none;
-        }
-        .back-button button {
-            background-color: #6c757d;
-            color: white;
-        }
-        .back-button button:hover {
-            background-color: #5a6268;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Device</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  {% load static %}
+  <style>
+    /* Global */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Page Wrapper: Sidebar + Main Content */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      position: relative;  /* Added so absolute positioning inside works */
+      width: 250px;
+      background-color: #1d2d50;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h1 { font-size: 34px; margin-bottom: 30px; text-align: center; }
+    .nav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 60vh;
+    }
+    .sidebar nav a, .sidebar nav form { width: 100%; }
+    .sidebar nav a button,
+    .sidebar nav form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sidebar nav a button:hover,
+    .sidebar nav form button:hover { transform: translateY(-2px); }
+    .btn-dashboard {
+      background-color: #007bff;
+      color: #fff;
+      border: 1px solid #007bff;
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+    }
+    /* Device List button styling (active) – note: no pseudo-element here */
+    .btn-active {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
+      background-color: #ffffff;
+      color: #1d2d50;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+    }
+    /* Fake Add Device Button – appears below Device List button */
+.fake-add-device {
+  position: absolute;
+  top: 445px;  /* Adjust vertical position as needed */
+  left: 62%;   /* Push it slightly to the right */
+  transform: translateX(-50%);
+  width: 80%;
+  background-color: #fff;
+  border: 2px solid #ffffff;
+  padding: 8px 18px;  /* Reduced vertical padding to make the box shorter */
+  border-radius: 4px;
+  font-size: 20px;
+  color: #1d2d50;
+  z-index: 10;
+}
+
+.fake-second-box {
+  position: absolute;
+  top: 415px; /* Adjust this value to fine-tune its vertical position */
+  left: 50%;   /* Use the same horizontal positioning as the fake-add-device */
+  transform: translateX(-50%);
+  width: 10%;
+  background-color: #fff;
+  border: 2px solid #ffffff;
+  padding: 20px 18px;  /* You can adjust the padding to change the height */
+  border-radius: 4px;
+  font-size: 20px;
+  color: #1d2d50;
+  z-index: 10;
+}
+.owner-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-field select {
+  width: 80%; /* Reduces the width of the dropdown */
+}
+
+.add-user-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 32px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.add-user-button:hover {
+  background-color: #0056b3;
+}
+
+
+    .btn-success { background-color: #007bff; color: #fff; }
+    .btn-info { background-color: #007bff; color: #fff; }
+    .btn-warning { background-color: #007bff; color: #fff; }
+    .btn-danger { background-color: #e80808; color: #fff; }
+    .logout-container { margin-top: auto; }
+    .logout-container form button {
+      width: 100%;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      overflow-y: auto;
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .main-header h2 { font-size: 28px; color: #1d2d50; margin: 0; }
+    .welcome-message { font-size: 20px; color: #1d2d50; }
+
+    /* Content Container */
+    .content-container {
+      max-width: 2000px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      min-height: calc(100vh - 190px);
+    }
+
+    /* Form Container (for Add Device Form) */
+    .form-container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 0px;
+              border: 2px solid #121111;
+
+    }
+    .form-container h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; color: #555; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #121111;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button { width: 100%; padding: 10px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-active:hover {
+  background-color: #e0e0e0; /* Replace with your desired hover color */
+  color: #1d2d50; /* Adjust text color if needed */
+}
+
+    button:hover { background-color: #0056b3; }
+    .back-button { margin-top: 15px; text-align: center; }
+    .back-button a { text-decoration: none; }
+    .back-button button { background-color: #6c757d; color: white; }
+    .back-button button:hover { background-color: #5a6268; }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .page-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; flex-direction: row; justify-content: space-around; padding: 15px; position: relative; }
+      .sidebar h1 { font-size: 20px; }
+      .main-content { padding: 20px; }
+      .content-container { margin: 20px auto; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Add a New Device</h1>
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h1>Asset Manager</h1>
+      <div class="nav-container">
+        <nav>
+          <a href="{% url 'dashboard' %}"><button class="btn-dashboard">Dashboard</button></a>
+          <a href="{% url 'device_list' %}"><button class="btn-active">Device List</button></a>
+          <a href="{% url 'device_user_list' %}"><button class="btn-success">Device User List</button></a>
+          <a href="{% url 'reports' %}"><button class="btn-info">Reports</button></a>
+          <a href="{% url 'help_page' %}"><button class="btn-warning">AI Device Help</button></a>
+        </nav>
+        <div class="logout-container">
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Logout</button>
+          </form>
+        </div>
+          <div class="form-group">
 
-        <!-- Device Filter Dropdown (triggers page reload with selected filter) -->
-        <div class="form-group">
+</div>
+
+      </div>
+      <!-- Fake Add Device Button (for display only) -->
+      <div class="fake-add-device">Add Device</div>
+        <div class="fake-second-box"></div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="main-header">
+        <h2>Add Device</h2>
+        <div class="welcome-message">Logged in as: {{ request.user.username }}</div>
+      </div>
+      <div class="content-container">
+        <div class="form-container">
+          <h1>Add a New Device</h1>
+          <!-- Device Filter Dropdown -->
+          <div class="form-group">
             <label for="device-filter">Filter by Device Type</label>
             <select id="device-filter" onchange="applyFilter()">
-                <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
-                <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
-                <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
-                <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
-                <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
+              <option value="all" {% if selected_filter == 'all' %}selected{% endif %}>All Devices</option>
+              <option value="iphone" {% if selected_filter == 'iphone' %}selected{% endif %}>iPhones</option>
+              <option value="samsung" {% if selected_filter == 'samsung' %}selected{% endif %}>Samsung Phones</option>
+              <option value="ipad" {% if selected_filter == 'ipad' %}selected{% endif %}>iPads</option>
+              <option value="samsung-tab" {% if selected_filter == 'samsung-tab' %}selected{% endif %}>Samsung Tablets</option>
             </select>
-        </div>
-
-        <form method="post">
+          </div>
+          <form method="post">
             {% csrf_token %}
+             <label for="id_device_user">Device Owner</label>
+  <div class="owner-field">
+    {{ form.device_user }}
+    <a href="{% url 'device_user_list' %}" class="add-user-button">Add a User</a>
+  </div>
             <div class="form-group">
-                <label for="id_device_user">Device Owner</label>
-                {{ form.device_user }}
+              <label for="id_model">Device Model</label>
+              {{ form.model }}
             </div>
             <div class="form-group">
-                <label for="id_model">Device Model</label>
-                {{ form.model }}
-            </div>
-            <div class="form-group">
-                <label for="id_warranty_end_date">Warranty End Date</label>
-                {{ form.warranty_end_date }}
+              <label for="id_warranty_end_date">Warranty End Date</label>
+              {{ form.warranty_end_date }}
             </div>
             <button type="submit">Add Device</button>
-        </form>
-
-        <div class="back-button">
+          </form>
+          <div class="back-button">
             <a href="{% url 'device_list' %}">
-                <button>Back to Device List</button>
+              <button type="button">Back to Device List</button>
             </a>
+          </div>
         </div>
-    </div>
+      </div>
+    </main>
+  </div>
 
-    <script>
-        function applyFilter() {
-            const selectedFilter = document.getElementById("device-filter").value;
-            window.location.href = `?filter=${selectedFilter}`; // Reload page with filter
-        }
-    </script>
+  <script>
+    function applyFilter() {
+      const selectedFilter = document.getElementById("device-filter").value;
+      window.location.href = `?filter=${selectedFilter}`;
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
