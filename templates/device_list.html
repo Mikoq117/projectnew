@@ -468,5 +468,76 @@
       });
     }
   </script>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>Are you sure you want to logout?</h3>
+    <div class="modal-buttons">
+      <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+      <button id="cancelLogout" class="btn-primary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal-content {
+    background-color: #fff;
+    margin: 20% auto;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    border-radius: 8px;
+  }
+  .modal-buttons {
+    margin-top: 20px;
+  }
+  .modal-buttons button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+</style>
+
+<script>
+  // Attach these event listeners after the page loads
+  document.addEventListener("DOMContentLoaded", function() {
+    var logoutForm = document.querySelector(".logout-container form");
+    var logoutModal = document.getElementById("logoutModal");
+    var confirmLogout = document.getElementById("confirmLogout");
+    var cancelLogout = document.getElementById("cancelLogout");
+
+    if (logoutForm) {
+      logoutForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        logoutModal.style.display = "block";
+      });
+    }
+
+    if (confirmLogout) {
+      confirmLogout.addEventListener("click", function() {
+        logoutModal.style.display = "none";
+        logoutForm.submit();
+      });
+    }
+
+    if (cancelLogout) {
+      cancelLogout.addEventListener("click", function() {
+        logoutModal.style.display = "none";
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
