@@ -72,7 +72,7 @@
     .btn-primary { background-color: #007bff; color: #fff; }
     .btn-success { background-color: #007bff; color: #fff; }
     .btn-info    { background-color: #007bff; color: #fff; }
-    /* Active indicator for AI Device Help */
+    /* Active indicator: AI Device Help */
     .btn-active {
       position: relative;
       width: 70%;
@@ -124,8 +124,10 @@
     }
     .content-container {
       width: 90%;
-      max-width: 800px;
+      max-width: 1300px;  /* Increased overall width */
       background: white;
+        border: 2px black;
+        height: 700px;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
       overflow: hidden;
@@ -158,11 +160,11 @@
       color: white;
     }
 
-    /* Landscape Chat & Prompt Layout */
+    /* Landscape Layout for Chat & Prompt */
     .chat-body {
       display: flex;
       flex-direction: row;
-      height: 400px;
+      height: 600px;  /* Increased chat area height */
     }
     .chat-column {
       flex: 1;
@@ -171,6 +173,7 @@
       border-right: 1px solid #ddd;
       padding: 15px;
       background: #f9f9f9;
+         height: 650px; /* Ensure it takes full height */
     }
     .prompt-column {
       flex: 1;
@@ -180,14 +183,16 @@
     .chat-box {
       flex: 1;
       overflow-y: auto;
+  height: 100%
       margin-bottom: 10px;
     }
     .message {
-      max-width: 80%;
+      max-width: 100%;
       margin-bottom: 12px;
       padding: 10px 15px;
       border-radius: 20px;
       word-wrap: break-word;
+      font-size: 25px;  /* Increased font size in chatbox */
     }
     .user-message {
       align-self: flex-end;
@@ -209,6 +214,7 @@
       font-weight: bold;
       margin-bottom: 5px;
       display: block;
+      font-size: 20px;
     }
     .prompt-builder input,
     .prompt-builder select,
@@ -218,16 +224,18 @@
       margin-bottom: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
+      font-size: 20px;
     }
     .prompt-builder button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;  /* Increased padding */
       background: #007bff;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: 0.3s;
+      font-size: 18px;  /* Increased font size for button */
     }
     .prompt-builder button:hover {
       background: #0056b3;
@@ -269,10 +277,10 @@
     <main class="main-content">
       <div class="content-container">
         <div class="chat-header">
-          <a href="{% url 'dashboard' %}" class="back-button">Dashboard</a>
+
           AI Device Recommendations
         </div>
-        <!-- New Landscape Layout for Chat & Prompt -->
+        <!-- Landscape Layout for Chat & Prompt -->
         <div class="chat-body">
           <div class="chat-column">
             <div class="chat-box" id="chatbox">
