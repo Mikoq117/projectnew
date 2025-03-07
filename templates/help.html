@@ -164,6 +164,7 @@
     .chat-body {
       display: flex;
       flex-direction: row;
+
       height: 600px;  /* Increased chat area height */
     }
     .chat-column {
@@ -183,6 +184,7 @@
     .chat-box {
       flex: 1;
       overflow-y: auto;
+
   height: 100%
       margin-bottom: 10px;
     }
@@ -222,31 +224,40 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #070707;
       border-radius: 5px;
       font-size: 20px;
     }
     .prompt-builder button {
       width: 100%;
-      padding: 12px;  /* Increased padding */
+      padding: 15px;  /* Increased padding */
       background: #007bff;
       color: white;
-      border: none;
+      border: 2px solid #121111;
       border-radius: 5px;
       cursor: pointer;
       transition: 0.3s;
-      font-size: 18px;  /* Increased font size for button */
+      font-size: 20px;  /* Increased font size for button */
     }
     .prompt-builder button:hover {
       background: #0056b3;
     }
+     .box {
+            width: 600px;
+            height: 150px;
+            background-color: #e8e6e6;
+            border: 1px solid #121111;
+            padding: 10px;
+            margin: 10px;
+         font-size: 25px ;
+        }
   </style>
 </head>
 <body>
   <div class="page-wrapper">
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
-      <h1>Asset Manager</h1>
+      <h1>Device Manager Pro</h1>
       <div class="nav-container">
         <nav>
           <a href="{% url 'dashboard' %}">
@@ -301,6 +312,9 @@
               <label for="extraNeeds">Extra Needs:</label>
               <textarea id="extraNeeds" placeholder="Mention any extra requirements"></textarea>
               <button onclick="generatePrompt()">Get Recommendation</button>
+                <div class="box"> <b>Instructions:</b> <br> Use the input box to put in some info about the kind of device you need. The AI Help bot will take your needs in a device and recommend it best 3 options!
+    </div>
+
             </div>
           </div>
         </div>

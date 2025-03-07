@@ -54,6 +54,28 @@
         button:hover {
             opacity: 0.8;
         }
+        /* Terminal Output Box */
+        .terminal-output {
+            margin-top: 30px;
+            background-color: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: left;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+        .terminal-output h2 {
+            color: #fff;
+            font-size: 20px;
+            margin: 0 0 10px 0;
+        }
+        .terminal-output pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -89,6 +111,29 @@
                 <button type="submit" class="btn-primary">Scrape Android Tablets</button>
             </form>
         </div>
+
+        <!-- Terminal Output Box -->
+        <div class="terminal-output">
+            <h2>Terminal Output</h2>
+           <pre id="terminalOutput">{{ terminal_output }}</pre>
+
+<!-- Terminal output will be displayed here -->
+
+        </div>
+        <script>
+        function fetchTerminalOutput() {
+  fetch('/api/terminal-output')  // Replace with your actual endpoint URL
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('terminalOutput').innerText = data;
+    })
+    .catch(error => console.error("Error fetching terminal output:", error));
+}
+
+// Call the function periodically to update the output
+setInterval(fetchTerminalOutput, 5000); // updates every 5 seconds
+        </script>
+
     </div>
 </body>
 </html>

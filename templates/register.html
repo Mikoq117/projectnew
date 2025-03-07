@@ -1,86 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #777;
-            font-size: 14px;
-        }
-        .footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Asset Manager Register</title>
+  {% load static %}
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  <style>
+    /* Global styles */
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Fixed Sidebar Navigation */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px; /* Adjust sidebar width if needed */
+      height: 100vh; /* Full viewport height */
+      background-color: #1d2d50;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar h1 {
+      font-size: 34px;
+      margin-bottom: 30px;
+      color: #fff;
+      text-align: center;
+    }
+    .nav-icons {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly; /* Evenly distribute icons */
+      flex-grow: 1;
+      width: 100%;
+    }
+    /* Nav icon size - adjust here to change image size */
+    .nav-icon {
+      width: 120px;  /* Increased by 50% from 80px */
+      height: 120px; /* Increased by 50% from 80px */
+      object-fit: cover;
+      margin: 10px auto;
+      transition: transform 0.3s;
+    }
+    .nav-icon:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content Area */
+    .main-content {
+      margin-left: 250px; /* Space for fixed sidebar */
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    /* Register Container - Adjust these values to change the login box size */
+    .login-container {
+      max-width: 500px; /* Adjust container width if needed */
+      width: 100%;
+      padding: 50px;  /* Increased padding */
+      background: #fff;
+      border: 2px solid black;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    /* Heading styling */
+    .login-container h1 {
+      text-align: center;
+      font-size: 32px; /* Larger heading */
+      margin-bottom: 30px;
+      color: #333;
+    }
+    form {
+      margin-top: 20px;
+    }
+    .form-group {
+      margin-bottom: 25px; /* Increased spacing */
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+      font-size: 25px; /* Larger label text */
+    }
+    .form-group input {
+      width: 100%;
+      padding: 14px; /* Increased input padding */
+      font-size: 25px; /* Larger input text */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .btn-login {
+      width: 100%;
+      padding: 14px;  /* Increased button padding */
+      font-size: 20px; /* Larger button text */
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-login:hover {
+      background-color: #0056b3;
+    }
+    .additional-links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px; /* Increased font size */
+    }
+    .additional-links a {
+      color: #007bff;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .additional-links a:hover {
+      color: #0056b3;
+    }
+
+    /* Page layout: Sidebar + Main Content */
+    .page-wrapper {
+      display: flex;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
+  <div class="page-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h1>Device Manager Pro</h1>
+      <div class="nav-icons">
+        <img src="{% static 'images/iphone.jpg' %}" alt="Dashboard" class="nav-icon">
+        <img src="{% static 'images/androidphone.png' %}" alt="Device List" class="nav-icon">
+        <img src="{% static 'images/android_tablet.png' %}" alt="Device User List" class="nav-icon">
+        <img src="{% static 'images/ipad.png' %}" alt="Reports" class="nav-icon">
+      </div>
+    </aside>
+    <!-- Main Content: Register Form -->
+    <main class="main-content">
+      <div class="login-container">
         <h1>Register</h1>
         <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Register</button>
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn-login">Register</button>
         </form>
-        <div class="footer">
-            <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
+        <div class="additional-links">
+          <p>Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
         </div>
-    </div>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
